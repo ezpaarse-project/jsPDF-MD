@@ -1,0 +1,10 @@
+{
+	"extends": "./tsconfig.json",
+	"include": [
+		"src",
+		"example",
+		"commitlint.config.js",
+		".eslintrc.js",
+		"vite.config.ts"
+	]
+}
