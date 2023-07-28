@@ -1,3 +1,4 @@
+import { warn } from 'console';
 import { marked } from 'marked';
 
 import * as Md from './elements';
@@ -33,12 +34,16 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
     );
 
     // Return elements
-    return new Md.Document(this.elements, this.imagesToLoad);
+    return new Md.Document(
+      this.elements,
+      this.imagesToLoad,
+    );
   }
 
   // Hooks
 
   code(_code: string, _language: string | undefined, _isEscaped: boolean) {
+    warn('Code in MD are not supported');
     return '';
   }
 
@@ -63,7 +68,7 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
 
   // eslint-disable-next-line class-methods-use-this
   html(_html: string) {
-    throw new Error('HTML in MD are not supported');
+    warn('HTML in MD are not supported');
     return '';
   }
 
@@ -148,8 +153,7 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
   }
 
   checkbox(_checked: boolean) {
-    // TODO[feat]: support checkbox
-
+    warn('Checkboxes in MD are not supported');
     return '';
   }
 
@@ -173,6 +177,7 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
   }
 
   table(_header: string, _body: string) {
+    warn('Tables in MD are not supported');
     return '';
   }
 
@@ -187,6 +192,7 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
       align: 'center' | 'left' | 'right' | null;
     },
   ) {
+    this.elements.pop(); // temporary remove table cells
     return '';
   }
 
@@ -235,6 +241,7 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
   }
 
   codespan(_code: string) {
+    warn('Code in MD are not supported');
     return '';
   }
 

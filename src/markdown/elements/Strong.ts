@@ -4,6 +4,7 @@ import type {
   Position,
   Area,
   RenderResult,
+  RenderOptions,
 } from '../types';
 
 import TextElement from './Text';
@@ -18,6 +19,7 @@ export default class StrongElement extends TextElement {
 
   render(
     pdf: jsPDF,
+    opts: RenderOptions,
     edge: Area,
     start?: Position,
   ): RenderResult {
@@ -26,6 +28,7 @@ export default class StrongElement extends TextElement {
 
     const rendered = super.render(
       pdf,
+      opts,
       edge,
       start,
     );

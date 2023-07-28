@@ -4,6 +4,7 @@ import type {
   Position,
   Area,
   RenderResult,
+  RenderOptions,
 } from '../types';
 
 export default abstract class Element<T = unknown> {
@@ -34,6 +35,7 @@ export default abstract class Element<T = unknown> {
 
   abstract render(
     pdf: jsPDF,
+    opts: RenderOptions,
     edge: Area,
     start?: Position,
   ): RenderResult;

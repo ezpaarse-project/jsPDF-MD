@@ -4,6 +4,7 @@ import type {
   Position,
   Area,
   RenderResult,
+  RenderOptions,
 } from '../types';
 
 import Element from './Element';
@@ -17,6 +18,7 @@ export default class QuoteElement extends Element<undefined> {
 
   render(
     pdf: jsPDF,
+    opts: RenderOptions,
     edge: Area,
     start?: Position,
   ): RenderResult {
@@ -29,6 +31,7 @@ export default class QuoteElement extends Element<undefined> {
     for (const child of this.children) {
       const rendered = child.render(
         pdf,
+        opts,
         {
           ...edge,
           x: edge.x + paddingLeft,

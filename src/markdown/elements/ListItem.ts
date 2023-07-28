@@ -4,6 +4,7 @@ import type {
   Position,
   Area,
   RenderResult,
+  RenderOptions,
 } from '../types';
 
 import type Element from './Element';
@@ -22,6 +23,7 @@ export default class ListItemElement extends ParagraphElement {
 
   render(
     pdf: jsPDF,
+    opts: RenderOptions,
     edge: Area,
     start?: Position,
   ): RenderResult {
@@ -29,6 +31,7 @@ export default class ListItemElement extends ParagraphElement {
 
     const rendered = super.render(
       pdf,
+      opts,
       edge,
       start,
     );
@@ -44,6 +47,7 @@ export default class ListItemElement extends ParagraphElement {
       for (const subList of this.subLists) {
         const subRendered = subList.render(
           pdf,
+          opts,
           {
             x: this.cursor.x + paddingLeft,
             y: this.cursor.y,

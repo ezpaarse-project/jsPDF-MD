@@ -6,6 +6,7 @@ import type {
   Size,
   Area,
   RenderResult,
+  RenderOptions,
 } from '../types';
 
 import Element from './Element';
@@ -31,6 +32,7 @@ export default class TextElement extends Element<string> {
 
   render(
     pdf: jsPDF,
+    opts: RenderOptions,
     edge: Area,
     start?: Position,
   ): RenderResult {
@@ -44,6 +46,7 @@ export default class TextElement extends Element<string> {
     let totalWidth = 0;
     let lines = 1;
     const lastLine: Size = { width: 0, height: 0 };
+    let hasCreatedPage = false;
 
     for (let i = 0; i < words.length; i += 1) {
       let word = words[i];
@@ -56,7 +59,7 @@ export default class TextElement extends Element<string> {
         throw new Error(`Word "${word.trim()}" is too long to be printed.`);
       }
 
-      // If will be overflowing
+      // If will be overflowing horizontal
       if (this.cursor.x + wordWidth > edge.x + edge.width) {
         lines += 1;
         // Return to the edge
@@ -67,6 +70,16 @@ export default class TextElement extends Element<string> {
 
         word = word.trimStart();
         ({ w: wordWidth, h: wordHeight } = pdf.getTextDimensions(word));
+      }
+
+      // If will be overflowing vertical
+      if (
+        opts.pageBreak
+        && this.cursor.y + wordHeight > edge.y + edge.height
+      ) {
+        pdf.addPage();
+        this.cursor = { x: edge.x, y: edge.y };
+        hasCreatedPage = true;
       }
 
       this.printWord(word, pdf);
@@ -85,6 +98,7 @@ export default class TextElement extends Element<string> {
       height: lines * lastLine.height,
       lastLine,
       isBlock: lines > 1,
+      hasCreatedPage,
     };
   }
 }

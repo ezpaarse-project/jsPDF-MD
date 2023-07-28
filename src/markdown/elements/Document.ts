@@ -4,6 +4,7 @@ import {
   Position,
   Area,
   RenderResult,
+  RenderOptions,
 } from '../types';
 
 import Element from './Element';
@@ -29,6 +30,7 @@ export default class Document extends Element<undefined> {
 
   render(
     pdf: jsPDF,
+    opts: RenderOptions = { pageBreak: true },
     edge?: Area,
     start?: Position,
   ): RenderResult {
@@ -41,11 +43,13 @@ export default class Document extends Element<undefined> {
     };
     const s = start ?? { x: e.x, y: e.y };
     this.cursor = { ...s };
+    let hasCreatedPage = false;
 
     // eslint-disable-next-line no-restricted-syntax
     for (const child of this.children) {
-      const { height } = child.render(
+      const rendered = child.render(
         pdf,
+        opts,
         e,
         {
           x: s.x,
@@ -53,12 +57,19 @@ export default class Document extends Element<undefined> {
         },
       );
 
-      this.cursor.y += height;
+      if (rendered.hasCreatedPage) {
+        this.cursor.y = 0;
+      }
 
-      // TODO: Some content are cut
-      if (this.cursor.y >= e.y + e.height) {
+      this.cursor.y += rendered.height;
+
+      if (!rendered.hasCreatedPage && this.cursor.y >= e.y + e.height) {
+        if (!opts.pageBreak) {
+          break;
+        }
         pdf.addPage();
         this.cursor = { x: e.x, y: e.y };
+        hasCreatedPage = true;
       }
     }
 
@@ -66,6 +77,7 @@ export default class Document extends Element<undefined> {
       ...e,
       lastLine: e,
       isBlock: true,
+      hasCreatedPage,
     };
   }
 }

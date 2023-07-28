@@ -4,6 +4,7 @@ import type {
   Position,
   Area,
   RenderResult,
+  RenderOptions,
 } from '../types';
 
 import Element from './Element';
@@ -23,6 +24,7 @@ export default class HeadingElement extends ParagraphElement {
 
   render(
     pdf: jsPDF,
+    opts: RenderOptions,
     edge: Area,
     start?: Position,
   ): RenderResult {
@@ -31,6 +33,7 @@ export default class HeadingElement extends ParagraphElement {
 
     const rendered = super.render(
       pdf,
+      opts,
       edge,
       start,
     );

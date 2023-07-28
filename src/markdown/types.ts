@@ -16,4 +16,12 @@ export type FontStyle = 'bold' | 'italic' | 'bolditalic';
 
 // Render types
 
-export type RenderResult = Size & { lastLine: Size, isBlock?: boolean };
+export type RenderResult = Size & {
+  lastLine: Size,
+  isBlock?: boolean,
+  hasCreatedPage?: boolean,
+};
+
+export type RenderOptions = {
+  pageBreak?: boolean,
+};

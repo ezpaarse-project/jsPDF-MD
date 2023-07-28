@@ -4,6 +4,7 @@ import type {
   Position,
   Area,
   RenderResult,
+  RenderOptions,
 } from '../types';
 
 import Element from './Element';
@@ -16,6 +17,7 @@ export default class HrElement extends Element<undefined> {
   // eslint-disable-next-line class-methods-use-this
   render(
     pdf: jsPDF,
+    opts: RenderOptions,
     edge: Area,
     start?: Position,
   ): RenderResult {

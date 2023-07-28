@@ -9,6 +9,8 @@ import type {
   Position,
   Area,
   RenderResult,
+  RenderOptions,
+  Size,
 } from '../types';
 
 import Element from './Element';
@@ -129,6 +131,7 @@ export default class ImgElement extends Element<string> {
 
   render(
     pdf: jsPDF,
+    opts: RenderOptions,
     edge: Area,
     start?: Position,
   ): RenderResult {
@@ -138,25 +141,40 @@ export default class ImgElement extends Element<string> {
     const s = start ?? { x: 0, y: 0 };
 
     // Max image size while keeping aspect ratio
-    const maxW = edge.width - (s.x - edge.x);
-    const w = Math.min(this.meta.width, maxW);
-    const h = (this.meta.height / this.meta.width) * w;
+    const size: Size = { width: 0, height: 0 };
+    if (this.meta.width >= this.meta.height) {
+      const maxW = edge.width - (s.x - edge.x);
+      size.width = Math.min(this.meta.width, maxW);
+      size.height = (this.meta.height / this.meta.width) * size.width;
+    } else {
+      const maxH = edge.height - (s.y - edge.y);
+      size.height = Math.min(this.meta.height, maxH);
+      size.width = (this.meta.width / this.meta.height) * size.height;
+    }
+
+    const res = {
+      width: size.width,
+      height: size.height,
+      hasCreatedPage: false,
+    };
+
+    if (opts.pageBreak && s.y + size.height > edge.x + edge.height) {
+      pdf.addPage();
+      s.x = edge.x;
+      s.y = edge.y;
+      res.hasCreatedPage = true;
+    }
 
     pdf.addImage({
       imageData: this.content,
       x: s.x,
       y: s.y,
-      width: w,
-      height: h,
+      ...res,
     });
 
     return {
-      width: w,
-      height: h,
-      lastLine: {
-        width: w,
-        height: h,
-      },
+      ...res,
+      lastLine: res,
     };
   }
 }

@@ -1,9 +1,6 @@
 import type { jsPDF } from 'jspdf';
 
-import type {
-  Area,
-  RenderResult,
-} from '../types';
+import type { Area, RenderResult, RenderOptions } from '../types';
 
 import Element from './Element';
 
@@ -16,6 +13,7 @@ export default class DelElement extends Element<string> {
 
   render(
     _pdf: jsPDF,
+    _opts: RenderOptions,
     edge: Area,
   ): RenderResult {
     const res = {

@@ -5,6 +5,7 @@ import type {
   Size,
   Area,
   RenderResult,
+  RenderOptions,
 } from '../types';
 
 import Element from './Element';
@@ -61,6 +62,7 @@ export default class ListElement extends Element<undefined> {
 
   render(
     pdf: jsPDF,
+    opts: RenderOptions,
     edge: Area,
     start?: Position,
   ): RenderResult {
@@ -73,19 +75,30 @@ export default class ListElement extends Element<undefined> {
     const drawColor = pdf.getDrawColor();
     const fillColor = pdf.getFillColor();
 
+    let hasCreatedPage = true;
     for (let i = 0; i < this.children.length; i += 1) {
       const child = this.children[i];
       const width = edge.width - (s.x - edge.x) - this.paddingLeft;
       // Print content
       const rendered = child.render(
         pdf,
+        opts,
+        {
+          x: this.cursor.x + this.paddingLeft,
+          y: edge.y,
+          height: edge.height,
+          width,
+        },
         {
           x: this.cursor.x + this.paddingLeft,
           y: this.cursor.y,
-          height: 0,
-          width,
         },
       );
+
+      if (rendered.hasCreatedPage) {
+        this.cursor.y = edge.y;
+        hasCreatedPage = true;
+      }
 
       // Print bullet
       if (this.ordered) {
@@ -107,13 +120,12 @@ export default class ListElement extends Element<undefined> {
       lastLine = rendered.lastLine;
     }
 
-    const res = {
+    return {
       width: edge.width,
-      height: this.cursor.y - s.y,
+      height: this.cursor.y - (hasCreatedPage ? edge.y : s.y),
       lastLine,
       isBlock: true,
+      hasCreatedPage,
     };
-
-    return res;
   }
 }
