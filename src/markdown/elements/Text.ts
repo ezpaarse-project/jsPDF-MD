@@ -5,7 +5,6 @@ import type {
   Position,
   Size,
   Area,
-  PDFDefault,
   RenderResult,
 } from '../types';
 
@@ -32,12 +31,12 @@ export default class TextElement extends Element<string> {
 
   render(
     pdf: jsPDF,
-    _def: PDFDefault,
-    start: Position,
     edge: Area,
+    start?: Position,
   ): RenderResult {
     // Setup default values needed at render
-    this.cursor = { ...start };
+    const s = start ?? { x: edge.x, y: edge.y };
+    this.cursor = { ...s };
 
     // Print word per word to mimic CSS's property `word-break: break-word;`
     const words = this.content.split(' ');
@@ -69,11 +68,6 @@ export default class TextElement extends Element<string> {
         word = word.trimStart();
         ({ w: wordWidth, h: wordHeight } = pdf.getTextDimensions(word));
       }
-
-      // if (this.cursor.y + wordHeight > edge.y + edge.height) {
-      //   pdf.addPage();
-      //   this.cursor.y = edge.y;
-      // }
 
       this.printWord(word, pdf);
       this.cursor.x += wordWidth;

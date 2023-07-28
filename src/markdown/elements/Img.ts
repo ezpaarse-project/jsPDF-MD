@@ -8,7 +8,6 @@ import { Image } from 'canvas';
 import type {
   Position,
   Area,
-  PDFDefault,
   RenderResult,
 } from '../types';
 
@@ -130,32 +129,33 @@ export default class ImgElement extends Element<string> {
 
   render(
     pdf: jsPDF,
-    _def: PDFDefault,
-    start: Position,
-    _edge: Area,
+    edge: Area,
+    start?: Position,
   ): RenderResult {
     if (!this.isLoaded() || !this.meta) {
       throw new Error('Please load image first');
     }
+    const s = start ?? { x: 0, y: 0 };
 
     // Max image size while keeping aspect ratio
-    const w = Math.min(this.meta.width, 200);
+    const maxW = edge.width - (s.x - edge.x);
+    const w = Math.min(this.meta.width, maxW);
     const h = (this.meta.height / this.meta.width) * w;
 
     pdf.addImage({
       imageData: this.content,
-      x: start.x,
-      y: start.y,
+      x: s.x,
+      y: s.y,
       width: w,
       height: h,
     });
 
     return {
-      height: h,
       width: w,
+      height: h,
       lastLine: {
-        height: h,
         width: w,
+        height: h,
       },
     };
   }

@@ -3,7 +3,6 @@ import type { jsPDF } from 'jspdf';
 import type {
   Position,
   Area,
-  PDFDefault,
   RenderResult,
 } from '../types';
 
@@ -23,17 +22,15 @@ export default class ListItemElement extends ParagraphElement {
 
   render(
     pdf: jsPDF,
-    def: PDFDefault,
-    start: Position,
     edge: Area,
+    start?: Position,
   ): RenderResult {
     const paddingLeft = 24;
 
     const rendered = super.render(
       pdf,
-      def,
-      start,
       edge,
+      start,
     );
 
     if (this.subLists.length > 0) {
@@ -47,7 +44,6 @@ export default class ListItemElement extends ParagraphElement {
       for (const subList of this.subLists) {
         const subRendered = subList.render(
           pdf,
-          def,
           this.cursor,
           {
             x: this.cursor.x + paddingLeft,

@@ -3,7 +3,6 @@ import type { jsPDF } from 'jspdf';
 import type {
   Position,
   Area,
-  PDFDefault,
   RenderResult,
 } from '../types';
 
@@ -35,8 +34,7 @@ export default abstract class Element<T = unknown> {
 
   abstract render(
     pdf: jsPDF,
-    def: PDFDefault,
-    start: Position,
     edge: Area,
+    start?: Position,
   ): RenderResult;
 }

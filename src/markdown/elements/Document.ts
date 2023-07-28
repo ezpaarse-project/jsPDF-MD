@@ -3,7 +3,6 @@ import type jsPDF from 'jspdf';
 import {
   Position,
   Area,
-  PDFDefault,
   RenderResult,
 } from '../types';
 
@@ -30,31 +29,42 @@ export default class Document extends Element<undefined> {
 
   render(
     pdf: jsPDF,
-    def: PDFDefault,
-    start: Position,
-    edge: Area,
+    edge?: Area,
+    start?: Position,
   ): RenderResult {
     // Setup default values needed at render
-    this.cursor = { ...start };
+    const e = edge ?? {
+      x: 0,
+      y: 0,
+      width: pdf.internal.pageSize.getWidth(),
+      height: pdf.internal.pageSize.getHeight(),
+    };
+    const s = start ?? { x: e.x, y: e.y };
+    this.cursor = { ...s };
 
     // eslint-disable-next-line no-restricted-syntax
     for (const child of this.children) {
       const { height } = child.render(
         pdf,
-        def,
+        e,
         {
-          x: start.x,
+          x: s.x,
           y: this.cursor.y,
         },
-        edge,
       );
 
       this.cursor.y += height;
+
+      // TODO: Some content are cut
+      if (this.cursor.y >= e.y + e.height) {
+        pdf.addPage();
+        this.cursor = { x: e.x, y: e.y };
+      }
     }
 
     return {
-      ...edge,
-      lastLine: edge,
+      ...e,
+      lastLine: e,
       isBlock: true,
     };
   }

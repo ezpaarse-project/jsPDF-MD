@@ -3,7 +3,6 @@ import type { jsPDF } from 'jspdf';
 import type {
   Position,
   Area,
-  PDFDefault,
   RenderResult,
 } from '../types';
 
@@ -24,21 +23,19 @@ export default class HeadingElement extends ParagraphElement {
 
   render(
     pdf: jsPDF,
-    def: PDFDefault,
-    start: Position,
     edge: Area,
+    start?: Position,
   ): RenderResult {
-    const fontSize = 48 / this.level;
-    pdf.setFontSize(fontSize);
+    const fontSize = pdf.getFontSize();
+    pdf.setFontSize(48 / this.level);
 
     const rendered = super.render(
       pdf,
-      def,
-      start,
       edge,
+      start,
     );
 
-    pdf.setFontSize(def.fontSize);
+    pdf.setFontSize(fontSize);
 
     return rendered;
   }

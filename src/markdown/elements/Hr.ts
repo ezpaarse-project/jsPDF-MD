@@ -3,7 +3,6 @@ import type { jsPDF } from 'jspdf';
 import type {
   Position,
   Area,
-  PDFDefault,
   RenderResult,
 } from '../types';
 
@@ -17,23 +16,28 @@ export default class HrElement extends Element<undefined> {
   // eslint-disable-next-line class-methods-use-this
   render(
     pdf: jsPDF,
-    def: PDFDefault,
-    start: Position,
     edge: Area,
+    start?: Position,
   ): RenderResult {
+    const paddingY = 5;
+    const s = start ?? { x: 0, y: 0 };
+    const width = edge.width - (s.x - edge.x);
+
+    const drawColor = pdf.getDrawColor();
+
     pdf
       .setDrawColor('lightgrey')
       .line(
-        start.x,
-        start.y,
-        start.x + edge.width,
-        start.y,
+        s.x,
+        s.y + paddingY,
+        s.x + width,
+        s.y + paddingY,
       )
-      .setDrawColor(def.drawColor);
+      .setDrawColor(drawColor);
 
     const res = {
-      width: edge.width,
-      height: 1,
+      width,
+      height: (2 * paddingY) + 1,
     };
 
     return {

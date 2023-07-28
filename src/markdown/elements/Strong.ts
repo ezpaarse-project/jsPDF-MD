@@ -3,7 +3,6 @@ import type { jsPDF } from 'jspdf';
 import type {
   Position,
   Area,
-  PDFDefault,
   RenderResult,
 } from '../types';
 
@@ -19,15 +18,19 @@ export default class StrongElement extends TextElement {
 
   render(
     pdf: jsPDF,
-    def: PDFDefault,
-    start: Position,
     edge: Area,
+    start?: Position,
   ): RenderResult {
-    pdf.setFont(def.font.fontName, this.isItalic ? 'bolditalic' : 'bold');
+    const font = pdf.getFont();
+    pdf.setFont(font.fontName, this.isItalic ? 'bolditalic' : 'bold');
 
-    const rendered = super.render(pdf, def, start, edge);
+    const rendered = super.render(
+      pdf,
+      edge,
+      start,
+    );
 
-    pdf.setFont(def.font.fontName, def.font.fontStyle);
+    pdf.setFont(font.fontName, font.fontStyle);
 
     return rendered;
   }

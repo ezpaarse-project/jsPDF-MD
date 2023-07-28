@@ -4,7 +4,6 @@ import type {
   Position,
   Size,
   Area,
-  PDFDefault,
   RenderResult,
 } from '../types';
 
@@ -16,6 +15,8 @@ export default class ListElement extends Element<undefined> {
 
   protected marginBottom = 0;
 
+  private paddingLeft = 24;
+
   constructor(
     children: ListItemElement[],
     private ordered: boolean,
@@ -26,23 +27,22 @@ export default class ListElement extends Element<undefined> {
 
   private printOrderedBullet(
     pdf: jsPDF,
-    paddingLeft: number,
     elHeight: number,
-    id: number,
+    number: number,
   ) {
     pdf
       .text(
-        `${id}.`,
-        this.cursor.x + (paddingLeft / 2),
+        `${number}.`,
+        this.cursor.x + (this.paddingLeft / 4),
         this.cursor.y + elHeight,
       );
   }
 
   private printUnorderedBullet(
     pdf: jsPDF,
-    paddingLeft: number,
     elHeight: number,
     drawColor: string,
+    fillColor: string,
   ) {
     const bulletRadius = 3;
 
@@ -50,42 +50,39 @@ export default class ListElement extends Element<undefined> {
       .setFillColor('black')
       .setDrawColor('black')
       .circle(
-        this.cursor.x + (paddingLeft / 2),
+        this.cursor.x + (this.paddingLeft / 2),
         this.cursor.y + (elHeight / 2) + (bulletRadius / 2),
         bulletRadius,
         'F',
       )
       .setDrawColor(drawColor)
-      .setFillColor(drawColor);
+      .setFillColor(fillColor);
   }
 
   render(
     pdf: jsPDF,
-    def: PDFDefault,
-    start: Position,
     edge: Area,
+    start?: Position,
   ): RenderResult {
     // Setup default values needed at render
-    this.cursor = { ...start };
+    const s = start ?? { x: edge.x, y: edge.y };
+    this.cursor = { ...s };
     let lastLine: Size = { width: 0, height: 0 };
-    const paddingLeft = 24;
     const gap = 3;
+
+    const drawColor = pdf.getDrawColor();
+    const fillColor = pdf.getFillColor();
 
     for (let i = 0; i < this.children.length; i += 1) {
       const child = this.children[i];
       // Print content
       const rendered = child.render(
         pdf,
-        def,
         {
-          x: this.cursor.x + paddingLeft,
-          y: this.cursor.y,
-        },
-        {
-          x: this.cursor.x + paddingLeft,
+          x: this.cursor.x + this.paddingLeft,
           y: this.cursor.y,
           height: 0,
-          width: edge.width - this.cursor.x - paddingLeft,
+          width: edge.width - this.cursor.x - this.paddingLeft,
         },
       );
 
@@ -93,16 +90,15 @@ export default class ListElement extends Element<undefined> {
       if (this.ordered) {
         this.printOrderedBullet(
           pdf,
-          paddingLeft,
           rendered.lastLine.height,
           this.start + i,
         );
       } else {
         this.printUnorderedBullet(
           pdf,
-          paddingLeft,
           rendered.lastLine.height,
-          def.drawColor,
+          drawColor,
+          fillColor,
         );
       }
 
@@ -112,7 +108,7 @@ export default class ListElement extends Element<undefined> {
 
     const res = {
       width: edge.width,
-      height: this.cursor.y - start.y,
+      height: this.cursor.y - s.y,
       lastLine,
       isBlock: true,
     };

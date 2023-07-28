@@ -3,7 +3,6 @@ import type { jsPDF } from 'jspdf';
 import type {
   Position,
   Area,
-  PDFDefault,
   RenderResult,
 } from '../types';
 
@@ -12,38 +11,38 @@ import ParagraphElement from './Paragraph';
 export default class QuoteElement extends ParagraphElement {
   render(
     pdf: jsPDF,
-    def: PDFDefault,
-    start: Position,
     edge: Area,
+    start?: Position,
   ): RenderResult {
     // TODO: Support nested
+    const s = start ?? { x: edge.x, y: edge.y };
     const paddingLeft = 12;
     const barWidth = 3;
 
     const rendered = super.render(
       pdf,
-      def,
-      {
-        x: start.x + paddingLeft,
-        y: start.y,
-      },
       {
         ...edge,
         x: edge.x + paddingLeft,
         width: edge.width - paddingLeft,
       },
+      {
+        x: s.x + paddingLeft,
+        y: s.y,
+      },
     );
 
+    const fillColor = pdf.getFillColor();
     pdf
       .setFillColor('lightgrey')
       .rect(
-        start.x,
-        start.y,
+        s.x,
+        s.y,
         barWidth,
         rendered.height,
         'F',
       )
-      .setFillColor(def.drawColor);
+      .setFillColor(fillColor);
 
     return {
       ...rendered,

@@ -4,34 +4,6 @@ import { join } from 'node:path';
 import jsPDF from 'jspdf';
 import Parser from '../src/markdown/Parser';
 
-const preparePDF = () => {
-  // eslint-disable-next-line new-cap
-  const pdf = new jsPDF({
-    unit: 'px',
-    orientation: 'landscape',
-    hotfixes: ['px_scaling'],
-    compress: true,
-  });
-
-  const defaults = {
-    font: pdf.getFont(),
-    fontSize: pdf.getFontSize(),
-    fontColor: pdf.getTextColor(),
-    drawColor: pdf.getDrawColor(),
-  };
-
-  const size = {
-    width: pdf.internal.pageSize.getWidth(),
-    height: pdf.internal.pageSize.getHeight(),
-  };
-
-  return {
-    pdf,
-    defaults,
-    size,
-  };
-};
-
 const remoteRequestor = async (url: string, method: string) => {
   const request = await fetch(url, { method });
 
@@ -46,7 +18,13 @@ const runOnFile = async (file: string) => {
   const md = await readFile(path, 'utf-8');
 
   // Init PDF
-  const { pdf, defaults, size } = preparePDF();
+  // eslint-disable-next-line new-cap
+  const pdf = new jsPDF({
+    unit: 'px',
+    orientation: 'landscape',
+    hotfixes: ['px_scaling'],
+    compress: true,
+  });
 
   // Parse Markdown
   const parser = new Parser(md);
@@ -59,19 +37,7 @@ const runOnFile = async (file: string) => {
   );
 
   // Render
-  doc.render(
-    pdf,
-    {
-      ...defaults,
-      cursor: { x: 0, y: 0 },
-    },
-    { x: 0, y: 0 },
-    {
-      ...size,
-      x: 0,
-      y: 0,
-    },
-  );
+  doc.render(pdf);
 
   await pdf.save(`${path}.pdf`, { returnPromise: true });
 };

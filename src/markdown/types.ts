@@ -1,5 +1,3 @@
-import type { Font } from 'jspdf';
-
 // Common types
 
 export type Position = {
@@ -19,11 +17,3 @@ export type FontStyle = 'bold' | 'italic' | 'bolditalic';
 // Render types
 
 export type RenderResult = Size & { lastLine: Size, isBlock?: boolean };
-
-export type PDFDefault = {
-  cursor: Position,
-  font: Font,
-  fontSize: number
-  fontColor: string
-  drawColor: string
-};

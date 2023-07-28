@@ -3,7 +3,6 @@ import type { jsPDF } from 'jspdf';
 import type {
   Position,
   Area,
-  PDFDefault,
   RenderResult,
 } from '../types';
 
@@ -20,41 +19,46 @@ export default class LinkElement extends ParagraphElement {
 
   render(
     pdf: jsPDF,
-    def: PDFDefault,
-    start: Position,
     edge: Area,
+    start?: Position,
   ): RenderResult {
+    const s = start ?? { x: edge.x, y: edge.y };
     const gap = 3;
+
+    const fontColor = pdf.getTextColor();
+    const drawColor = pdf.getDrawColor();
 
     pdf.setTextColor('blue');
 
     const rendered = super.render(
       pdf,
-      def,
-      start,
       edge,
+      s,
     );
 
     pdf
       // Add underline // TODO: Support multi line
       .setDrawColor('blue')
       .line(
-        start.x,
-        start.y + rendered.lastLine.height + gap,
-        start.x + rendered.lastLine.width,
-        start.y + rendered.lastLine.height + gap,
+        s.x,
+        s.y + rendered.lastLine.height + gap,
+        s.x + rendered.lastLine.width,
+        s.y + rendered.lastLine.height + gap,
       )
       // Reset style
-      .setDrawColor(def.drawColor)
-      .setTextColor(def.fontColor)
+      .setDrawColor(drawColor)
+      .setTextColor(fontColor)
       // Add link
       .link(
-        start.x,
-        start.y,
+        s.x,
+        s.y,
         rendered.lastLine.width,
         rendered.lastLine.height + gap,
         { url: this.href },
       );
+
+    rendered.height += 1;
+    rendered.lastLine.height += 1;
 
     return rendered;
   }
