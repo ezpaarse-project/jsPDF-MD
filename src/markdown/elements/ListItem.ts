@@ -44,12 +44,11 @@ export default class ListItemElement extends ParagraphElement {
       for (const subList of this.subLists) {
         const subRendered = subList.render(
           pdf,
-          this.cursor,
           {
             x: this.cursor.x + paddingLeft,
             y: this.cursor.y,
-            height: 0,
-            width: edge.width - this.cursor.x - paddingLeft,
+            height: edge.height,
+            width: edge.width - paddingLeft,
           },
         );
 

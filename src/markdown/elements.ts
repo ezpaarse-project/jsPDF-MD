@@ -13,7 +13,7 @@ export { default as HeadingElement, HeadingLevel } from './elements/Heading';
 export { default as LinkElement } from './elements/Link';
 export { default as DelElement } from './elements/Del';
 export { default as QuoteElement } from './elements/Quote';
-export { default as ListItemElement } from './elements/Item';
+export { default as ListItemElement } from './elements/ListItem';
 
 export { default as ListElement } from './elements/List';
 

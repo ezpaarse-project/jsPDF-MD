@@ -6,47 +6,65 @@ import type {
   RenderResult,
 } from '../types';
 
-import ParagraphElement from './Paragraph';
+import Element from './Element';
 
-export default class QuoteElement extends ParagraphElement {
+export default class QuoteElement extends Element<undefined> {
+  protected marginBottom = 16; // Same as ParagraphElement
+
+  constructor(children: Element[]) {
+    super(undefined, children);
+  }
+
   render(
     pdf: jsPDF,
     edge: Area,
     start?: Position,
   ): RenderResult {
-    // TODO: Support nested
     const s = start ?? { x: edge.x, y: edge.y };
+    this.cursor = { ...s };
     const paddingLeft = 12;
-    const barWidth = 3;
+    const barWidth = 5;
 
-    const rendered = super.render(
-      pdf,
-      {
-        ...edge,
-        x: edge.x + paddingLeft,
-        width: edge.width - paddingLeft,
-      },
-      {
-        x: s.x + paddingLeft,
-        y: s.y,
-      },
-    );
+    // eslint-disable-next-line no-restricted-syntax
+    for (const child of this.children) {
+      const rendered = child.render(
+        pdf,
+        {
+          ...edge,
+          x: edge.x + paddingLeft,
+          width: edge.width - paddingLeft,
+        },
+        {
+          x: s.x + paddingLeft,
+          y: this.cursor.y,
+        },
+      );
+
+      this.cursor.y += rendered.height;
+    }
+
+    const height = this.cursor.y - s.y;
 
     const fillColor = pdf.getFillColor();
     pdf
-      .setFillColor('lightgrey')
+      .setFillColor('gray')
       .rect(
         s.x,
         s.y,
         barWidth,
-        rendered.height,
+        height - (this.marginBottom / 2),
         'F',
       )
       .setFillColor(fillColor);
 
+    const res = {
+      width: edge.width,
+      height,
+    };
+
     return {
-      ...rendered,
-      height: rendered.height + this.marginBottom, // ?
+      ...res,
+      lastLine: res,
       isBlock: true,
     };
   }

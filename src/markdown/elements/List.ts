@@ -8,7 +8,7 @@ import type {
 } from '../types';
 
 import Element from './Element';
-import ListItemElement from './Item';
+import ListItemElement from './ListItem';
 
 export default class ListElement extends Element<undefined> {
   declare protected children: ListItemElement[];
@@ -75,6 +75,7 @@ export default class ListElement extends Element<undefined> {
 
     for (let i = 0; i < this.children.length; i += 1) {
       const child = this.children[i];
+      const width = edge.width - (s.x - edge.x) - this.paddingLeft;
       // Print content
       const rendered = child.render(
         pdf,
@@ -82,7 +83,7 @@ export default class ListElement extends Element<undefined> {
           x: this.cursor.x + this.paddingLeft,
           y: this.cursor.y,
           height: 0,
-          width: edge.width - this.cursor.x - this.paddingLeft,
+          width,
         },
       );
 
