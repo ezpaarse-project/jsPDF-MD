@@ -139,15 +139,16 @@ export default class ImgElement extends Element<string> {
       throw new Error('Please load image first');
     }
     const s = start ?? { x: 0, y: 0 };
+    this.cursor = { ...s };
 
     // Max image size while keeping aspect ratio
     const size: Size = { width: 0, height: 0 };
     if (this.meta.width >= this.meta.height) {
-      const maxW = edge.width - (s.x - edge.x);
+      const maxW = edge.width - (this.cursor.x - edge.x);
       size.width = Math.min(this.meta.width, maxW);
       size.height = (this.meta.height / this.meta.width) * size.width;
     } else {
-      const maxH = edge.height - (s.y - edge.y);
+      const maxH = edge.height - (this.cursor.y - edge.y);
       size.height = Math.min(this.meta.height, maxH);
       size.width = (this.meta.width / this.meta.height) * size.height;
     }
@@ -158,17 +159,17 @@ export default class ImgElement extends Element<string> {
       hasCreatedPage: false,
     };
 
-    if (opts.pageBreak && s.y + size.height > edge.x + edge.height) {
+    if (opts.pageBreak && this.cursor.y + size.height > edge.x + edge.height) {
       pdf.addPage();
-      s.x = edge.x;
-      s.y = edge.y;
+      this.cursor.x = edge.x;
+      this.cursor.y = edge.y;
       res.hasCreatedPage = true;
     }
 
     pdf.addImage({
       imageData: this.content,
-      x: s.x,
-      y: s.y,
+      x: this.cursor.x,
+      y: this.cursor.y,
       ...res,
     });
 
