@@ -2,6 +2,7 @@ export { default as Element } from './elements/Element';
 
 export { default as HrElement } from './elements/Hr';
 export { default as BrElement } from './elements/Br';
+export { default as CheckboxElement } from './elements/Checkbox';
 
 export { default as ImgElement } from './elements/Img';
 export { default as TextElement } from './elements/Text';

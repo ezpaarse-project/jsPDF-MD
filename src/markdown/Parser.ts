@@ -136,7 +136,7 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
     let innerText = '';
     while (innerText !== sanitizedText && this.elements.length > 0) {
       const lastElement = this.elements.pop();
-      if (typeof lastElement?.content === 'string') {
+      if (typeof lastElement?.content === 'string' || lastElement instanceof Md.CheckboxElement) {
         innerText = `${lastElement.content}${innerText}`;
 
         if (lastElement instanceof Md.ListElement) {
@@ -152,9 +152,10 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
     return text;
   }
 
-  checkbox(_checked: boolean) {
-    warn('Checkboxes in MD are not supported');
-    return '';
+  checkbox(checked: boolean) {
+    this.elements.push(new Md.CheckboxElement(checked));
+
+    return `${checked}`;
   }
 
   paragraph(text: string) {

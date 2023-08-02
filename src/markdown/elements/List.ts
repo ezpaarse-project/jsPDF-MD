@@ -45,7 +45,7 @@ export default class ListElement extends Element<undefined> {
     drawColor: string,
     fillColor: string,
   ) {
-    const bulletRadius = 3;
+    const bulletRadius = pdf.getFontSize() * (3 / 16);
 
     pdf
       .setFillColor('black')
