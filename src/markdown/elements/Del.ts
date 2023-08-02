@@ -4,6 +4,7 @@ import type {
   Position,
   Area,
   RenderResult,
+  RenderOptions,
 } from '../types';
 
 import ParagraphElement from './Paragraph';
@@ -11,6 +12,7 @@ import ParagraphElement from './Paragraph';
 export default class DelElement extends ParagraphElement {
   render(
     pdf: jsPDF,
+    opts: RenderOptions,
     edge: Area,
     start?: Position,
   ): RenderResult {
@@ -18,6 +20,7 @@ export default class DelElement extends ParagraphElement {
 
     const rendered = super.render(
       pdf,
+      opts,
       edge,
       s,
     );

@@ -8,8 +8,8 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "runtimeVersion": "18.16.0",
-      "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
+      "runtimeVersion": "18",
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
       "skipFiles": [
         "<node_internals>/**"
       ],
