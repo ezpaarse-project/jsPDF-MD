@@ -8,6 +8,7 @@ import type {
 } from '../types';
 
 import Element from './Element';
+import TextElement from './Text';
 
 export default class QuoteElement extends Element<undefined> {
   protected marginBottom = 16; // Same as ParagraphElement
@@ -53,7 +54,7 @@ export default class QuoteElement extends Element<undefined> {
       .setFillColor('gray')
       .rect(
         s.x,
-        s.y,
+        s.y - TextElement.getTextOffsetYFix(pdf),
         barWidth,
         height - (this.marginBottom / 2),
         'F',

@@ -9,6 +9,7 @@ import type {
 
 import Element from './Element';
 import ParagraphElement from './Paragraph';
+import TextElement from './Text';
 
 export default class LinkElement extends ParagraphElement {
   constructor(
@@ -39,14 +40,15 @@ export default class LinkElement extends ParagraphElement {
       s,
     );
 
+    const textOffsetFix = TextElement.getTextOffsetYFix(pdf);
     pdf
       // Add underline // TODO: Support multi line
       .setDrawColor('blue')
       .line(
         s.x,
-        s.y + rendered.lastLine.height + gap,
+        s.y + rendered.lastLine.height + gap - textOffsetFix,
         s.x + rendered.lastLine.width,
-        s.y + rendered.lastLine.height + gap,
+        s.y + rendered.lastLine.height + gap - textOffsetFix,
       )
       // Reset style
       .setDrawColor(drawColor)

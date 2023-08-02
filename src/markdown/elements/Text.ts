@@ -1,4 +1,5 @@
 import { unescape } from 'lodash';
+
 import type { jsPDF } from 'jspdf';
 
 import type {
@@ -17,14 +18,21 @@ export default class TextElement extends Element<string> {
       .replace(/\n/g, '');
   }
 
+  static getTextOffsetYFix(pdf: jsPDF) {
+    // Measure is taken with fontSize = 16 so we scale it
+    return pdf.getFontSize() * (5 / 16);
+  }
+
   constructor(content: string) {
     super(TextElement.sanitizeContent(content));
   }
 
   private printWord(word: string, pdf: jsPDF): Size {
-    // Text is printed from the bottom-left corner
+    const textOffsetFix = TextElement.getTextOffsetYFix(pdf);
+
     const { w: width, h: height } = pdf.getTextDimensions(word);
-    const y = this.cursor.y + height;
+    // Text is printed from the bottom-left corner
+    const y = this.cursor.y + height - textOffsetFix;
 
     pdf.text(word, this.cursor.x, y);
     return { width, height };

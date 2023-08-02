@@ -91,7 +91,7 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
       }
     }
     this.elements.push(
-      new Md.HeadingElement(children, level as 1 | 2 | 3 | 4 | 5 | 6),
+      new Md.HeadingElement(children, level as Md.HeadingLevel),
     );
 
     return text;
@@ -177,24 +177,96 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
     return text;
   }
 
-  table(_header: string, _body: string) {
-    warn('Tables in MD are not supported');
-    return '';
+  table(header: string, body: string) {
+    const sanitizedBody = Md.TextElement.sanitizeContent(body);
+    const sanitizedHeader = Md.TextElement.sanitizeContent(header);
+
+    const bodyEls = [];
+    let innerText = '';
+    while (innerText !== sanitizedBody && this.elements.length > 0) {
+      const lastElement = this.elements.pop();
+
+      // Limit children to TableRow elements
+      if (!(lastElement instanceof Md.TableRowElement)) {
+        if (lastElement) {
+          this.elements.push(lastElement);
+        }
+        break;
+      }
+
+      innerText = `${lastElement.content}${innerText}`;
+      bodyEls.unshift(lastElement);
+    }
+
+    const headerEls = [];
+    innerText = '';
+    while (innerText !== sanitizedHeader && this.elements.length > 0) {
+      const lastElement = this.elements.pop();
+
+      // Limit children to TableRow elements
+      if (!(lastElement instanceof Md.TableRowElement)) {
+        if (lastElement) {
+          this.elements.push(lastElement);
+        }
+        break;
+      }
+
+      innerText = `${lastElement.content}${innerText}`;
+      headerEls.unshift(lastElement);
+    }
+
+    this.elements.push(new Md.TableElement(headerEls, bodyEls));
+
+    return `${header}${body}`;
   }
 
-  tablerow(_content: string) {
-    return '';
+  tablerow(content: string) {
+    const sanitizedContent = Md.TextElement.sanitizeContent(content);
+
+    const children = [];
+    let innerText = '';
+    while (innerText !== sanitizedContent && this.elements.length > 0) {
+      const lastElement = this.elements.pop();
+
+      // Limit children to TableCell elements
+      if (!(lastElement instanceof Md.TableCellElement)) {
+        if (lastElement) {
+          this.elements.push(lastElement);
+        }
+        break;
+      }
+
+      innerText = `${lastElement.content}${innerText}`;
+      children.unshift(lastElement);
+    }
+
+    this.elements.push(new Md.TableRowElement(children));
+
+    return content;
   }
 
   tablecell(
-    _content: string,
-    _flags: {
+    content: string,
+    flags: {
       header: boolean;
-      align: 'center' | 'left' | 'right' | null;
+      align: Md.CellAlign | null;
     },
   ) {
-    this.elements.pop(); // temporary remove table cells
-    return '';
+    const sanitizedContent = Md.TextElement.sanitizeContent(content);
+
+    const children = [];
+    let innerText = '';
+    while (innerText !== sanitizedContent && this.elements.length > 0) {
+      const lastElement = this.elements.pop();
+      if (typeof lastElement?.content === 'string') {
+        innerText = `${lastElement.content}${innerText}`;
+        children.unshift(lastElement);
+      }
+    }
+
+    this.elements.push(new Md.TableCellElement(children, flags.header, flags.align ?? undefined));
+
+    return content;
   }
 
   strong(text: string) {

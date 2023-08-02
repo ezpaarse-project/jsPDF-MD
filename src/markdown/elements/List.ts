@@ -10,6 +10,7 @@ import type {
 
 import Element from './Element';
 import ListItemElement from './ListItem';
+import TextElement from './Text';
 
 export default class ListElement extends Element<undefined> {
   declare protected children: ListItemElement[];
@@ -31,11 +32,12 @@ export default class ListElement extends Element<undefined> {
     elHeight: number,
     number: number,
   ) {
+    const textOffsetFix = TextElement.getTextOffsetYFix(pdf);
     pdf
       .text(
         `${number}.`,
         this.cursor.x + (this.paddingLeft / 4),
-        this.cursor.y + elHeight,
+        this.cursor.y + elHeight - textOffsetFix,
       );
   }
 
@@ -45,6 +47,8 @@ export default class ListElement extends Element<undefined> {
     drawColor: string,
     fillColor: string,
   ) {
+    const textOffsetFix = TextElement.getTextOffsetYFix(pdf) / 2;
+    // Measure is taken with fontSize = 16 so we scale it
     const bulletRadius = pdf.getFontSize() * (3 / 16);
 
     pdf
@@ -52,7 +56,7 @@ export default class ListElement extends Element<undefined> {
       .setDrawColor('black')
       .circle(
         this.cursor.x + (this.paddingLeft / 2),
-        this.cursor.y + (elHeight / 2) + (bulletRadius / 2),
+        this.cursor.y + (elHeight / 2) + (bulletRadius / 2) - textOffsetFix,
         bulletRadius,
         'F',
       )

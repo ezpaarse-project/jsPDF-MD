@@ -1,10 +1,14 @@
 import type { jsPDF } from 'jspdf';
 
-import type { Area, RenderResult, RenderOptions } from '../types';
+import type {
+  Area,
+  RenderResult,
+  RenderOptions,
+} from '../types';
 
 import Element from './Element';
 
-export default class DelElement extends Element<string> {
+export default class BrElement extends Element<string> {
   protected marginBottom = 8;
 
   constructor() {

@@ -15,6 +15,9 @@ export { default as LinkElement } from './elements/Link';
 export { default as DelElement } from './elements/Del';
 export { default as QuoteElement } from './elements/Quote';
 export { default as ListItemElement } from './elements/ListItem';
+export { default as TableCellElement, CellAlign } from './elements/TableCell';
+export { default as TableRowElement } from './elements/TableRow';
+export { default as TableElement } from './elements/Table';
 
 export { default as ListElement } from './elements/List';
 

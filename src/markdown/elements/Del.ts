@@ -9,6 +9,8 @@ import type {
 
 import ParagraphElement from './Paragraph';
 
+import TextElement from './Text';
+
 export default class DelElement extends ParagraphElement {
   render(
     pdf: jsPDF,
@@ -25,14 +27,18 @@ export default class DelElement extends ParagraphElement {
       s,
     );
 
-    const offsetTop = 3 * (rendered.lastLine.height / 4);
+    const offsetTop = 3 * (rendered.lastLine.height / 4) - TextElement.getTextOffsetYFix(pdf);
+    const lineWidth = pdf.getLineWidth();
     // TODO: support multi lines
-    pdf.line(
-      s.x,
-      s.y + offsetTop,
-      s.x + rendered.width,
-      s.y + offsetTop,
-    );
+    pdf
+      .setLineWidth(2)
+      .line(
+        s.x - 2,
+        s.y + offsetTop,
+        s.x + rendered.width + 2,
+        s.y + offsetTop,
+      )
+      .setLineWidth(lineWidth);
 
     return rendered;
   }
