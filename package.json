@@ -16,7 +16,6 @@
     "prepare": "husky install",
     "dev": "nodemon example/plugin/index.ts",
     "build": "tsc",
-    "build:types": "tsc",
     "lint": "eslint --fix ."
   },
   "lint-staged": {
