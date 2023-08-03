@@ -29,6 +29,7 @@ const mdToPDF = async (
     remoteRequestor,
     assetDir,
     margin,
+    logger,
     ...renderOpts
   } = opts || {};
 
@@ -51,7 +52,7 @@ const mdToPDF = async (
   };
 
   // Parse Markdown
-  const parser = new Parser(md);
+  const parser = new Parser(md, logger);
   const doc = await parser.parse();
 
   // Load images

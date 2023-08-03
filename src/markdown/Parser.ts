@@ -1,4 +1,3 @@
-import { warn } from 'console';
 import { marked } from 'marked';
 
 import * as Md from './elements';
@@ -8,7 +7,7 @@ export default class Parser<T = never> extends marked.Renderer<T> {
 
   private imagesToLoad: Md.ImgElement['load'][] = [];
 
-  constructor(private data: string) {
+  constructor(private data: string, private logger = console) {
     super();
   }
 
@@ -69,7 +68,7 @@ export default class Parser<T = never> extends marked.Renderer<T> {
 
   // eslint-disable-next-line class-methods-use-this
   html(_html: string) {
-    warn("HTML in MD isn't supported");
+    this.logger.warn("HTML in MD isn't supported");
     return '';
   }
 
