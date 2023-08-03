@@ -1,6 +1,6 @@
 {
   "name": "@ezpaarse-project/jspdf-md",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "jsPDF plugin for rendering MD into PDF in Node",
   "main": "src/index.ts",
   "exports": {
