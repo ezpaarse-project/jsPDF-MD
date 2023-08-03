@@ -5,6 +5,7 @@
 		"example",
 		"commitlint.config.js",
 		".eslintrc.js",
+		".releaserc.js",
 		"vite.config.ts"
 	]
 }
