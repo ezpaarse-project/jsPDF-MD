@@ -15,7 +15,11 @@ export type PluginOptions = RenderOptions & {
   /**
    * Margin between markdown and limit of page
    */
-  margin?: number | MarginOption
+  margin?: number | MarginOption,
+  /**
+   * Logger used by parser to send not critical messages
+   */
+  logger?: Console,
 };
 
 declare module 'jspdf' {
