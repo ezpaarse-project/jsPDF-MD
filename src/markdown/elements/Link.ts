@@ -7,9 +7,10 @@ import type {
   RenderOptions,
 } from '../types';
 
-import Element from './Element';
+import type Element from './Element';
 import ParagraphElement from './Paragraph';
 import TextElement from './Text';
+import ImgElement from './Img';
 
 export default class LinkElement extends ParagraphElement {
   constructor(
@@ -40,30 +41,42 @@ export default class LinkElement extends ParagraphElement {
       s,
     );
 
-    const textOffsetFix = TextElement.getTextOffsetYFix(pdf);
+    if (rendered.hasCreatedPage) {
+      s.x = edge.x;
+      s.y = edge.y;
+    }
+
+    // Don't add underline if there's an image
+    const hasImages = this.children.some((child) => child instanceof ImgElement);
+    if (!hasImages) {
+      const textOffsetFix = TextElement.getTextOffsetYFix(pdf);
+      const offset = gap - textOffsetFix;
+      pdf
+        // Add underline // TODO: Support multi line
+        .setDrawColor('blue')
+        .line(
+          s.x,
+          s.y + rendered.lastLine.height + offset,
+          s.x + rendered.lastLine.width,
+          s.y + rendered.lastLine.height + offset,
+        )
+        // Reset style
+        .setDrawColor(drawColor);
+
+      rendered.height += offset;
+      rendered.lastLine.height += offset;
+    }
+
+    // Add link
     pdf
-      // Add underline // TODO: Support multi line
-      .setDrawColor('blue')
-      .line(
-        s.x,
-        s.y + rendered.lastLine.height + gap - textOffsetFix,
-        s.x + rendered.lastLine.width,
-        s.y + rendered.lastLine.height + gap - textOffsetFix,
-      )
-      // Reset style
-      .setDrawColor(drawColor)
       .setTextColor(fontColor)
-      // Add link
       .link(
         s.x,
         s.y,
         rendered.lastLine.width,
-        rendered.lastLine.height + gap,
+        rendered.lastLine.height + (!hasImages ? gap : 0),
         { url: this.href },
       );
-
-    rendered.height += 1;
-    rendered.lastLine.height += 1;
 
     return rendered;
   }
