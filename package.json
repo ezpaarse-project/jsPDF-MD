@@ -1,5 +1,5 @@
 {
-  "name": "jspdf-md",
+  "name": "@ezpaarse-project/jspdf-md",
   "version": "1.0.0",
   "description": "jsPDF plugin for rendering MD into PDF in Node",
   "main": "src/index.ts",
@@ -8,7 +8,7 @@
       "default": "./dist/index.js"
     }
   },
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -16,6 +16,7 @@
     "prepare": "husky install",
     "dev": "nodemon example/plugin/index.ts",
     "build": "tsc",
+    "build:types": "tsc",
     "lint": "eslint --fix ."
   },
   "lint-staged": {
