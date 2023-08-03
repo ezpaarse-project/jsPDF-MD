@@ -14,6 +14,7 @@
   ],
   "scripts": {
     "prepare": "husky install",
+    "dev": "nodemon example/plugin/index.ts",
     "build": "tsc",
     "lint": "eslint --fix ."
   },
@@ -55,6 +56,7 @@
     "eslint-plugin-import": "^2.28.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
+    "nodemon": "^3.0.1",
     "sort-package-json": "^2.5.1",
     "typescript": "^5.1.6"
   },

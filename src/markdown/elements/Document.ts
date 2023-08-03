@@ -19,27 +19,46 @@ export default class Document extends Element<undefined> {
     super(undefined, children);
   }
 
+  /**
+   * Load images found during parse
+   *
+   * @param remoteRequestor The method used to fetch images
+   * @param assetDir The folder where to find local images
+   *
+   * @returns The data loaded
+   */
   loadImages(
     remoteRequestor: ImgRemoteRequestor,
-    assetDir: string,
+    assetDir?: string,
   ) {
     return Promise.all(
       this.imagesToLoad.map((loader) => loader(remoteRequestor, assetDir)),
     );
   }
 
+  /**
+    * Render given Markdown into given jsPDF instance
+    *
+    * @param pdf The jsPDF instance
+    * @param opts The render options
+    * @param edge Edges of the rendered document
+    * @param start Position to start withing edges
+   */
   render(
     pdf: jsPDF,
-    opts: RenderOptions = { pageBreak: true },
-    edge?: Area,
+    opts: RenderOptions = {},
+    edge?: Partial<Area>,
     start?: Position,
   ): RenderResult {
+    // eslint-disable-next-line no-param-reassign
+    opts.pageBreak = opts.pageBreak ?? true;
+
     // Setup default values needed at render
-    const e = edge ?? {
-      x: 0,
-      y: 0,
-      width: pdf.internal.pageSize.getWidth(),
-      height: pdf.internal.pageSize.getHeight(),
+    const e = {
+      x: edge?.x ?? 0,
+      y: edge?.y ?? 0,
+      width: edge?.width ?? pdf.internal.pageSize.getWidth(),
+      height: edge?.height ?? pdf.internal.pageSize.getHeight(),
     };
     const s = start ?? { x: e.x, y: e.y };
     this.cursor = { ...s };

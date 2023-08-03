@@ -16,12 +16,24 @@ import type {
 import Element from './Element';
 
 type ImgRequestorResult = {
+  /**
+   * The data of the ressource
+   */
   data: ArrayBuffer,
+  /**
+   * Headers of the response
+   */
   headers: Record<string, string>
 };
 
 export type ImgRemoteRequestor = (
+  /**
+   * The url of the ressource
+   */
   url: string,
+  /**
+   * The method used to get the ressource
+   */
   method: string,
 ) => Promise<ImgRequestorResult> | ImgRequestorResult;
 
@@ -72,8 +84,12 @@ export default class ImgElement extends Element<string> {
     this.content = `data:${mime};base64,${raw}`;
   }
 
-  private async fetchLocal(assetDir: string) {
-    const path = join('assets', this.src);
+  private async fetchLocal(assetDir?: string) {
+    if (!assetDir) {
+      throw new Error('Local images are not supported. Please provide a `assetDir` either when fetching images, or in plugin options.');
+    }
+
+    const path = join(assetDir, this.src);
     if (new RegExp(`^${assetDir}/[^.]*$`).test(path) === false) {
       throw new Error(`Md's image must be in the "${assetDir}" folder. Resolved: "${path}"`);
     }
@@ -105,7 +121,7 @@ export default class ImgElement extends Element<string> {
 
   async load(
     remoteRequestor: ImgRemoteRequestor,
-    assetDir: string,
+    assetDir?: string,
   ) {
     if (!this.isLoaded()) {
       if (this.isRemote()) {

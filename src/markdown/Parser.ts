@@ -3,7 +3,7 @@ import { marked } from 'marked';
 
 import * as Md from './elements';
 
-export default class MdParser<T = never> extends marked.Renderer<T> {
+export default class Parser<T = never> extends marked.Renderer<T> {
   private elements: Md.Element[] = [];
 
   private imagesToLoad: Md.ImgElement['load'][] = [];

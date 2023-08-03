@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/nodemon.json",
+  "ignore": [
+    "dist/**"
+  ],
+  "ext": "js,ts,json,md",
+  "watch": [
+    "src/**/*.js",
+    "src/**/*.ts",
+    "example/**/*.ts",
+    "example/**/*.md"
+  ],
+  "execMap": {
+    "ts": "node --inspect=0.0.0.0 -r ts-node/register"
+  },
+  "cwd": "example/plugin"
+}

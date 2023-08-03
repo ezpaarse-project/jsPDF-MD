@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import jsPDF from 'jspdf';
-import Parser from '../src/markdown/Parser';
+import { Parser } from '../../src';
 
 const remoteRequestor = async (url: string, method: string) => {
   const request = await fetch(url, { method });
@@ -42,4 +42,4 @@ const runOnFile = async (file: string) => {
   await pdf.save(`${path}.pdf`, { returnPromise: true });
 };
 
-runOnFile('all-markdown.md');
+runOnFile('../all-markdown.md');

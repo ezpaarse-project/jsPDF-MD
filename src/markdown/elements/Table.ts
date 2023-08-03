@@ -58,7 +58,7 @@ export default class TableElement extends Element<undefined> {
     this.cursor = { ...s };
     let hasCreatedPage = false;
 
-    const page = {
+    const pageSize = {
       height: pdf.internal.pageSize.getHeight(),
       width: pdf.internal.pageSize.getWidth(),
     };
@@ -114,8 +114,8 @@ export default class TableElement extends Element<undefined> {
         pdf,
         opts,
         {
-          x: -page.width,
-          y: -page.height,
+          x: -pageSize.width,
+          y: -pageSize.height,
           width: e.width,
           height: e.height,
         },
