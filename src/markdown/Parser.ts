@@ -42,9 +42,10 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
 
   // Hooks
 
-  code(_code: string, _language: string | undefined, _isEscaped: boolean) {
-    warn('Code in MD are not supported');
-    return '';
+  code(code: string, language: string | undefined, _isEscaped: boolean) {
+    this.elements.push(new Md.CodeElement(code, language));
+
+    return code;
   }
 
   blockquote(quote: string) {
@@ -68,7 +69,7 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
 
   // eslint-disable-next-line class-methods-use-this
   html(_html: string) {
-    warn('HTML in MD are not supported');
+    warn("HTML in MD isn't supported");
     return '';
   }
 
@@ -313,9 +314,10 @@ export default class MdParser<T = never> extends marked.Renderer<T> {
     return text;
   }
 
-  codespan(_code: string) {
-    warn('Code in MD are not supported');
-    return '';
+  codespan(code: string) {
+    this.elements.push(new Md.CodeSpanElement(code));
+
+    return code;
   }
 
   br() {

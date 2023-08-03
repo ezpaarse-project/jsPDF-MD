@@ -141,7 +141,7 @@ Minim id consequat adipisicing cupidatat laborum culpa veniam non consectetur et
 
 ## Inline code
 
-Ad amet irure est magna id mollit Lorem in do duis enim. Excepteur velit nisi magna ea pariatur pariatur ullamco fugiat deserunt sint non sint. Duis duis est `code in text` velit velit aute culpa ex quis pariatur pariatur laborum aute pariatur duis tempor sunt ad. Irure magna voluptate dolore consectetur consectetur irure esse. Anim magna `<strong>in culpa qui officia</strong>` dolor eiusmod esse amet aute cupidatat aliqua do id voluptate cupidatat reprehenderit amet labore deserunt.
+Ad amet irure est magna id mollit Lorem in do duis enim. Excepteur velit nisi magna ea pariatur pariatur ullamco fugiat deserunt sint non sint. Duis duis est `code in text` velit velit aute culpa ex quis pariatur pariatur laborum aute pariatur duis tempor sunt ad. Irure magna voluptate dolore consectetur consectetur irure esse. `<strong>in culpa qui officia</strong>` dolor eiusmod esse amet aute cupidatat aliqua do id voluptate cupidatat reprehenderit amet labore deserunt.
 
 ## Highlighted
 
@@ -163,6 +163,19 @@ func main() {
     http.HandleFunc("/", handler)
     http.ListenAndServe(":8080", nil)
 }
+```
+
+```js
+package main
+
+const handler = (w: http.ResponseWriter, r: http.Request) => {
+    console.log(`Hi there, I love ${r.path} !`)
+};
+
+const main = () => {
+    http.handleFunc('/', handler);
+    http.listenAndServe(8080, null);
+};
 ```
 
 Ex amet id ex aliquip id do laborum excepteur exercitation elit sint commodo occaecat nostrud est. Nostrud pariatur esse veniam laborum non sint magna sit laboris minim in id. Aliqua pariatur pariatur excepteur adipisicing irure culpa consequat commodo et ex id ad.

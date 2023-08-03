@@ -5,6 +5,8 @@ export { default as BrElement } from './elements/Br';
 export { default as CheckboxElement } from './elements/Checkbox';
 
 export { default as ImgElement } from './elements/Img';
+export { default as CodeSpanElement } from './elements/CodeSpan';
+export { default as CodeElement } from './elements/Code';
 export { default as TextElement } from './elements/Text';
 export { default as StrongElement } from './elements/Strong';
 export { default as EmElement } from './elements/Em';

@@ -24,4 +24,5 @@ export type RenderResult = Size & {
 
 export type RenderOptions = {
   pageBreak?: boolean,
+  codeFont?: string,
 };
