@@ -58,6 +58,10 @@ export default class TableElement extends Element<undefined> {
     this.cursor = { ...s };
     let hasCreatedPage = false;
 
+    const page = {
+      height: pdf.internal.pageSize.getHeight(),
+      width: pdf.internal.pageSize.getWidth(),
+    };
     const drawColor = pdf.getDrawColor();
     const lineWidth = pdf.getLineWidth();
 
@@ -105,24 +109,26 @@ export default class TableElement extends Element<undefined> {
           .setDrawColor(drawColor);
       }
 
-      const rendered = row.render(
+      // Hidden render to check if row will overflow
+      const shadowRender = row.render(
         pdf,
         opts,
-        e,
-        this.cursor,
+        {
+          x: -page.width,
+          y: -page.height,
+          width: e.width,
+          height: e.height,
+        },
       );
 
-      this.cursor = { x: s.x, y: this.cursor.y + rendered.height };
-      lastLine = { width: rendered.height, height: rendered.height };
-
       // If overflow
-      if (opts.pageBreak && this.cursor.y > edge.y + edge.height) {
+      if (opts.pageBreak && this.cursor.y + shadowRender.height > e.y + e.height) {
         this.drawBorder(
           pdf,
           {
             x: s.x,
             y: s.y,
-            height: this.cursor.y - s.y,
+            height: e.height - s.y + 10,
             width: e.width,
           },
         );
@@ -133,6 +139,17 @@ export default class TableElement extends Element<undefined> {
         s.y = e.y;
         this.cursor = { ...s };
       }
+
+      // Actual render
+      const rendered = row.render(
+        pdf,
+        opts,
+        e,
+        this.cursor,
+      );
+
+      this.cursor = { x: s.x, y: this.cursor.y + rendered.height };
+      lastLine = { width: rendered.height, height: rendered.height };
     }
 
     const res = {

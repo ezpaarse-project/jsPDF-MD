@@ -49,14 +49,21 @@ export default class ListItemElement extends ParagraphElement {
           pdf,
           opts,
           {
-            x: this.cursor.x + paddingLeft,
-            y: this.cursor.y,
+            x: edge.x + paddingLeft,
+            y: edge.y,
             height: edge.height,
             width: edge.width - paddingLeft,
           },
+          { ...this.cursor },
         );
 
         rendered.height += subRendered.height;
+        rendered.lastLine = subRendered.lastLine;
+
+        if (subRendered.hasCreatedPage) {
+          rendered.hasCreatedPage = true;
+          rendered.height = subRendered.height;
+        }
       }
     }
 

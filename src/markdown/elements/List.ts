@@ -79,10 +79,35 @@ export default class ListElement extends Element<undefined> {
     const drawColor = pdf.getDrawColor();
     const fillColor = pdf.getFillColor();
 
-    let hasCreatedPage = true;
+    let hasCreatedPage = false;
     for (let i = 0; i < this.children.length; i += 1) {
       const child = this.children[i];
-      const width = edge.width - (s.x - edge.x) - this.paddingLeft;
+      const maxWidth = edge.width - (s.x - edge.x) - this.paddingLeft;
+
+      const { h } = pdf.getTextDimensions(child.content || ' ', { maxWidth });
+      // If will be overflowing
+      if (this.cursor.y + h > edge.height) {
+        hasCreatedPage = true;
+        this.cursor.y = edge.y;
+        pdf.addPage();
+      }
+
+      // Print bullet
+      if (this.ordered) {
+        this.printOrderedBullet(
+          pdf,
+          h,
+          this.start + i,
+        );
+      } else {
+        this.printUnorderedBullet(
+          pdf,
+          h,
+          drawColor,
+          fillColor,
+        );
+      }
+
       // Print content
       const rendered = child.render(
         pdf,
@@ -91,7 +116,7 @@ export default class ListElement extends Element<undefined> {
           x: this.cursor.x + this.paddingLeft,
           y: edge.y,
           height: edge.height,
-          width,
+          width: maxWidth,
         },
         {
           x: this.cursor.x + this.paddingLeft,
@@ -102,22 +127,6 @@ export default class ListElement extends Element<undefined> {
       if (rendered.hasCreatedPage) {
         this.cursor.y = edge.y;
         hasCreatedPage = true;
-      }
-
-      // Print bullet
-      if (this.ordered) {
-        this.printOrderedBullet(
-          pdf,
-          rendered.lastLine.height,
-          this.start + i,
-        );
-      } else {
-        this.printUnorderedBullet(
-          pdf,
-          rendered.lastLine.height,
-          drawColor,
-          fillColor,
-        );
       }
 
       this.cursor.y += rendered.height + gap;
