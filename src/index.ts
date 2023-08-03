@@ -1,9 +1,10 @@
 import type jsPDF from 'jspdf';
 import type { PluginOptions, MarginOption } from './jspdf'; // extended types
 
+import type { ImgRemoteRequestor } from './markdown/elements/Img';
 import Parser from './markdown/Parser';
 
-const defaultRemoteRequestor = async (url: string, method: string) => {
+const defaultRemoteRequestor: ImgRemoteRequestor = async (url: string, method: string) => {
   const request = await fetch(url, { method });
 
   return {
@@ -97,6 +98,11 @@ try {
 
 export default mdToPDF;
 export {
+  /** * @deprecated use `MdParser` instead  */
   Parser,
+  Parser as MdParser,
+  /** * @deprecated use `MdParserOptions` instead  */
   PluginOptions,
+  PluginOptions as MdParserOptions,
+  ImgRemoteRequestor as MdImgRemoteRequestor,
 };

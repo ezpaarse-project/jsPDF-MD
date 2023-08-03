@@ -2,9 +2,9 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import jsPDF from 'jspdf';
-import { Parser } from '../../src';
+import { type MdImgRemoteRequestor, MdParser } from '../../src';
 
-const remoteRequestor = async (url: string, method: string) => {
+const remoteRequestor: MdImgRemoteRequestor = async (url, method) => {
   const request = await fetch(url, { method });
 
   return {
@@ -27,7 +27,7 @@ const runOnFile = async (file: string) => {
   });
 
   // Parse Markdown
-  const parser = new Parser(md);
+  const parser = new MdParser(md);
   const doc = await parser.parse();
 
   // Load images
