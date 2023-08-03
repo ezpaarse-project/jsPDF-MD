@@ -3,7 +3,7 @@ name: Build, generate changelog and publish to NPM
 on:
   push:
     branches:
-      - master
+      - main
       - beta
       - alpha
 
