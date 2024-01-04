@@ -2,7 +2,7 @@ import { marked } from 'marked';
 
 import * as Md from './elements';
 
-export default class Parser<T = never> extends marked.Renderer<T> {
+export default class Parser extends marked.Renderer {
   private elements: Md.Element[] = [];
 
   private imagesToLoad: Md.ImgElement['load'][] = [];
@@ -26,8 +26,6 @@ export default class Parser<T = never> extends marked.Renderer<T> {
       this.data,
       {
         async: true,
-        mangle: false,
-        headerIds: false,
         renderer: this,
       },
     );
@@ -53,11 +51,11 @@ export default class Parser<T = never> extends marked.Renderer<T> {
     const children = [];
     let innerText = '';
     while (innerText !== sanitizedQuote && this.elements.length > 0) {
-      const lastElement = this.elements.pop();
+      const lastElement = this.elements.at(-1);
       if (typeof lastElement?.content === 'string') {
         innerText = `${lastElement.content}${innerText}`;
 
-        children.unshift(lastElement);
+        children.unshift(this.elements.pop()!);
       }
     }
 
@@ -76,18 +74,17 @@ export default class Parser<T = never> extends marked.Renderer<T> {
     text: string,
     level: number,
     raw: string,
-    _slugger: marked.Slugger,
   ) {
     const sanitizedRaw = Md.TextElement.sanitizeContent(raw);
 
     const children = [];
     let innerText = '';
     while (innerText !== sanitizedRaw && this.elements.length > 0) {
-      const lastElement = this.elements.pop();
+      const lastElement = this.elements.at(-1);
       if (typeof lastElement?.content === 'string') {
         innerText = `${lastElement.content}${innerText}`;
 
-        children.unshift(lastElement);
+        children.unshift(this.elements.pop()!);
       }
     }
     this.elements.push(
@@ -109,18 +106,15 @@ export default class Parser<T = never> extends marked.Renderer<T> {
     const children = [];
     let innerText = '';
     while (innerText !== sanitizedBody && this.elements.length > 0) {
-      const lastElement = this.elements.pop();
+      const lastElement = this.elements.at(-1);
 
       // Limit children to ListItem elements
       if (!(lastElement instanceof Md.ListItemElement)) {
-        if (lastElement) {
-          this.elements.push(lastElement);
-        }
         break;
       }
 
       innerText = `${lastElement.content}${innerText}`;
-      children.unshift(lastElement);
+      children.unshift(this.elements.pop() as Md.ListItemElement);
     }
 
     this.elements.push(new Md.ListElement(children, ordered, start));
@@ -135,14 +129,15 @@ export default class Parser<T = never> extends marked.Renderer<T> {
     const subLists = [];
     let innerText = '';
     while (innerText !== sanitizedText && this.elements.length > 0) {
-      const lastElement = this.elements.pop();
+      const lastElement = this.elements.at(-1);
       if (typeof lastElement?.content === 'string' || lastElement instanceof Md.CheckboxElement) {
         innerText = `${lastElement.content}${innerText}`;
 
-        if (lastElement instanceof Md.ListElement) {
-          subLists.unshift(lastElement);
+        const popped = this.elements.pop()!;
+        if (popped instanceof Md.ListElement) {
+          subLists.unshift(popped);
         } else {
-          children.unshift(lastElement);
+          children.unshift(popped);
         }
       }
     }
@@ -164,11 +159,11 @@ export default class Parser<T = never> extends marked.Renderer<T> {
     const children = [];
     let innerText = '';
     while (innerText !== sanitizedText && this.elements.length > 0) {
-      const lastElement = this.elements.pop();
+      const lastElement = this.elements.at(-1);
       if (typeof lastElement?.content === 'string') {
         innerText = `${lastElement.content}${innerText}`;
 
-        children.unshift(lastElement);
+        children.unshift(this.elements.pop()!);
       }
     }
 
@@ -184,35 +179,29 @@ export default class Parser<T = never> extends marked.Renderer<T> {
     const bodyEls = [];
     let innerText = '';
     while (innerText !== sanitizedBody && this.elements.length > 0) {
-      const lastElement = this.elements.pop();
+      const lastElement = this.elements.at(-1);
 
       // Limit children to TableRow elements
       if (!(lastElement instanceof Md.TableRowElement)) {
-        if (lastElement) {
-          this.elements.push(lastElement);
-        }
         break;
       }
 
       innerText = `${lastElement.content}${innerText}`;
-      bodyEls.unshift(lastElement);
+      bodyEls.unshift(this.elements.pop()! as Md.TableRowElement);
     }
 
     const headerEls = [];
     innerText = '';
     while (innerText !== sanitizedHeader && this.elements.length > 0) {
-      const lastElement = this.elements.pop();
+      const lastElement = this.elements.at(-1);
 
       // Limit children to TableRow elements
       if (!(lastElement instanceof Md.TableRowElement)) {
-        if (lastElement) {
-          this.elements.push(lastElement);
-        }
         break;
       }
 
       innerText = `${lastElement.content}${innerText}`;
-      headerEls.unshift(lastElement);
+      headerEls.unshift(this.elements.pop()! as Md.TableRowElement);
     }
 
     this.elements.push(new Md.TableElement(headerEls, bodyEls));
@@ -226,18 +215,15 @@ export default class Parser<T = never> extends marked.Renderer<T> {
     const children = [];
     let innerText = '';
     while (innerText !== sanitizedContent && this.elements.length > 0) {
-      const lastElement = this.elements.pop();
+      const lastElement = this.elements.at(-1);
 
       // Limit children to TableCell elements
       if (!(lastElement instanceof Md.TableCellElement)) {
-        if (lastElement) {
-          this.elements.push(lastElement);
-        }
         break;
       }
 
       innerText = `${lastElement.content}${innerText}`;
-      children.unshift(lastElement);
+      children.unshift(this.elements.pop()! as Md.TableCellElement);
     }
 
     this.elements.push(new Md.TableRowElement(children));
@@ -257,10 +243,10 @@ export default class Parser<T = never> extends marked.Renderer<T> {
     const children = [];
     let innerText = '';
     while (innerText !== sanitizedContent && this.elements.length > 0) {
-      const lastElement = this.elements.pop();
+      const lastElement = this.elements.at(-1);
       if (typeof lastElement?.content === 'string') {
         innerText = `${lastElement.content}${innerText}`;
-        children.unshift(lastElement);
+        children.unshift(this.elements.pop()!);
       }
     }
 
@@ -331,11 +317,11 @@ export default class Parser<T = never> extends marked.Renderer<T> {
     const children = [];
     let innerText = '';
     while (innerText !== sanitizedText && this.elements.length > 0) {
-      const lastElement = this.elements.pop();
+      const lastElement = this.elements.at(-1);
       if (typeof lastElement?.content === 'string') {
         innerText = `${lastElement.content}${innerText}`;
 
-        children.unshift(lastElement);
+        children.unshift(this.elements.pop()!);
       }
     }
 
@@ -350,11 +336,11 @@ export default class Parser<T = never> extends marked.Renderer<T> {
     const children = [];
     let innerText = '';
     while (innerText !== textSanitized && this.elements.length > 0) {
-      const lastElement = this.elements.pop();
+      const lastElement = this.elements.at(-1);
       if (typeof lastElement?.content === 'string') {
         innerText = `${lastElement.content}${innerText}`;
 
-        children.unshift(lastElement);
+        children.unshift(this.elements.pop()!);
       }
     }
     this.elements.push(

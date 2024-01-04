@@ -5,10 +5,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "report: Debug",
-      "port": 9229,
+      "type": "node",
       "request": "attach",
-      "type": "node"
-    },
+      "name": "Node: Nodemon",
+      "restart": true,
+    }
   ]
 }
