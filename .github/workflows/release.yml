@@ -16,26 +16,27 @@ jobs:
       id-token: write # to enable use of OIDC for npm provenance
 
     steps:
-      - name: Checkout
+      - name: Checkout 🛎️
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
+      - name: Setup Node.js ⚙️
         uses: actions/setup-node@v3
         with:
-          node-version-file: ".nvmrc"
-          cache: 'npm'
+          node-version-file: .nvmrc
+          cache: npm
 
-      - name: Install dependencies
+      - name: Install dependencies ⚙️
         run: npm ci
 
-      - name: Build
+      - name: Build 🔧
         run: npm run build
 
-      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies 🔍
         run: npm audit signatures
 
-      - name: Release
+      - name: Release 🚀
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
         run: npx semantic-release

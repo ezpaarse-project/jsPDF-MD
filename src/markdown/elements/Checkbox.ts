@@ -10,9 +10,9 @@ import type {
 import Element from './Element';
 import TextElement from './Text';
 
-export default class CheckboxElement extends Element<boolean> {
+export default class CheckboxElement extends Element<string> {
   constructor(content: boolean) {
-    super(content, undefined);
+    super(`${content} `, undefined);
   }
 
   render(
