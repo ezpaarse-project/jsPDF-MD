@@ -1,4 +1,4 @@
-import Renderer from './markdown/Renderer';
+import Parser from './markdown/Parser';
 
 import type jsPDF from 'jspdf';
 
@@ -54,7 +54,7 @@ const mdToPDF = async (
   };
 
   // Parse Markdown
-  const parser = new Renderer(md, logger);
+  const parser = new Parser(md, logger);
   const doc = await parser.parse();
 
   // Load images

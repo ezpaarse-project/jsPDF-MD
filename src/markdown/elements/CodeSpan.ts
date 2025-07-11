@@ -3,6 +3,8 @@ import '../../fonts/Monospace-normal.js';
 
 import type jsPDF from 'jspdf';
 
+import { last } from 'lodash';
+
 import type {
   Area,
   Position,
@@ -41,8 +43,7 @@ export default class CodeSpanElement extends TextElement {
       parts[0].width = w;
       let rest = lineWidth - parts[0].width;
       while (rest > 0) {
-        // eslint-disable-next-line n/no-unsupported-features/es-syntax
-        const lastPart = parts.at(-1);
+        const lastPart = last(parts);
         if (lastPart) {
           lastPart.width += (edge.width - lastPart.x);
         }
