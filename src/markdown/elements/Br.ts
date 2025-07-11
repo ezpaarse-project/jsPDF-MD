@@ -1,12 +1,12 @@
+import Element from './Element';
+
 import type { jsPDF } from 'jspdf';
 
 import type {
   Area,
-  RenderResult,
   RenderOptions,
+  RenderResult,
 } from '../types';
-
-import Element from './Element';
 
 export default class BrElement extends Element<string> {
   protected marginBottom = 8;

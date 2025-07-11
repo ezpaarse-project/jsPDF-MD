@@ -1,13 +1,13 @@
+import Element from './Element';
+
 import type jsPDF from 'jspdf';
 
-import {
-  Position,
+import type {
   Area,
-  RenderResult,
+  Position,
   RenderOptions,
+  RenderResult,
 } from '../types';
-
-import Element from './Element';
 import type ImgElement from './Img';
 import type { ImgRemoteRequestor } from './Img';
 
@@ -27,12 +27,12 @@ export default class Document extends Element<undefined> {
    *
    * @returns The data loaded
    */
-  loadImages(
+  async loadImages(
     remoteRequestor: ImgRemoteRequestor,
     assetDir?: string,
-  ) {
+  ): Promise<{ data: string; height?: number; width?: number }[]> {
     return Promise.all(
-      this.imagesToLoad.map((loader) => loader(remoteRequestor, assetDir)),
+      this.imagesToLoad.map(async (loader) => loader(remoteRequestor, assetDir)),
     );
   }
 

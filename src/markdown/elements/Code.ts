@@ -1,14 +1,14 @@
+import Element from './Element';
+import TextElement from './Text';
+
 import type jsPDF from 'jspdf';
 
 import type {
-  RenderOptions,
   Area,
   Position,
+  RenderOptions,
   RenderResult,
 } from '../types';
-
-import Element from './Element';
-import TextElement from './Text';
 
 export default class CodeSpanElement extends Element<string> {
   declare protected children: TextElement[];
@@ -50,7 +50,7 @@ export default class CodeSpanElement extends Element<string> {
     pdf: jsPDF,
     opts: RenderOptions,
     edge: Area,
-    start?: Position | undefined,
+    start?: Position,
   ): RenderResult {
     const s = start ?? { x: edge.x, y: edge.y };
     const padding = pdf.getFontSize() * (10 / 16);
@@ -62,7 +62,7 @@ export default class CodeSpanElement extends Element<string> {
     const font = pdf.getFont();
     const textColor = pdf.getTextColor();
 
-    pdf.setFont(opts.codeFont || 'Monospace');
+    pdf.setFont(opts.codeFont ?? 'Monospace');
 
     let hasCreatedPage = false;
     let lastLine = { width: 0, height: 0 };

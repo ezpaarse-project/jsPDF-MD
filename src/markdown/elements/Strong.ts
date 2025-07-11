@@ -1,13 +1,13 @@
+import TextElement from './Text';
+
 import type { jsPDF } from 'jspdf';
 
 import type {
-  Position,
   Area,
-  RenderResult,
+  Position,
   RenderOptions,
+  RenderResult,
 } from '../types';
-
-import TextElement from './Text';
 
 export default class StrongElement extends TextElement {
   constructor(

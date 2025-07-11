@@ -1,14 +1,14 @@
+import Element from './Element';
+
 import type { jsPDF } from 'jspdf';
 
 import type {
-  Position,
-  Size,
   Area,
-  RenderResult,
+  Position,
   RenderOptions,
+  RenderResult,
+  Size,
 } from '../types';
-
-import Element from './Element';
 
 export default class ParagraphElement extends Element<undefined> {
   protected marginBottom = 16;

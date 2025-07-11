@@ -1,14 +1,14 @@
+import Element from './Element';
+import TextElement from './Text';
+
 import type jsPDF from 'jspdf';
 
 import type {
-  RenderOptions,
   Area,
   Position,
+  RenderOptions,
   RenderResult,
 } from '../types';
-
-import Element from './Element';
-import TextElement from './Text';
 
 export default class CheckboxElement extends Element<string> {
   constructor(content: boolean) {
@@ -19,7 +19,7 @@ export default class CheckboxElement extends Element<string> {
     pdf: jsPDF,
     opts: RenderOptions,
     edge: Area,
-    start?: Position | undefined,
+    start?: Position,
   ): RenderResult {
     const s = start ?? { x: edge.x, y: edge.y };
     // Measures is taken with fontSize = 16 so we scale it

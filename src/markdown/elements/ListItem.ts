@@ -1,15 +1,15 @@
+import ParagraphElement from './Paragraph';
+
 import type { jsPDF } from 'jspdf';
 
 import type {
-  Position,
   Area,
-  RenderResult,
+  Position,
   RenderOptions,
+  RenderResult,
 } from '../types';
-
 import type Element from './Element';
 import type ListElement from './List';
-import ParagraphElement from './Paragraph';
 
 export default class ListItemElement extends ParagraphElement {
   protected marginBottom = 0;

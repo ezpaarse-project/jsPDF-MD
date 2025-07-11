@@ -1,10 +1,12 @@
-import type jsPDF from 'jspdf';
-import type { PluginOptions, MarginOption } from './jspdf'; // extended types
+import Renderer from './markdown/Renderer';
 
+import type jsPDF from 'jspdf';
+
+import type { MarginOption, PluginOptions } from './jspdf'; // extended types
 import type { ImgRemoteRequestor } from './markdown/elements/Img';
-import Parser from './markdown/Parser';
 
 const defaultRemoteRequestor: ImgRemoteRequestor = async (url: string, method: string) => {
+  // eslint-disable-next-line n/no-unsupported-features/node-builtins
   const request = await fetch(url, { method });
 
   return {
@@ -24,14 +26,14 @@ const mdToPDF = async (
   pdf: jsPDF,
   md: string,
   opts?: PluginOptions,
-) => {
+): Promise<void> => {
   const {
     remoteRequestor,
     assetDir,
     margin,
     logger,
     ...renderOpts
-  } = opts || {};
+  } = opts ?? {};
 
   // Parse margin
   let m: MarginOption = {};
@@ -52,12 +54,12 @@ const mdToPDF = async (
   };
 
   // Parse Markdown
-  const parser = new Parser(md, logger);
+  const parser = new Renderer(md, logger);
   const doc = await parser.parse();
 
   // Load images
   await doc.loadImages(
-    remoteRequestor || defaultRemoteRequestor,
+    remoteRequestor ?? defaultRemoteRequestor,
     assetDir,
   );
 
@@ -68,13 +70,14 @@ const mdToPDF = async (
     {
       x: m.left,
       y: m.top,
-      width: (m.left || m.right) && (pageSize.width - (m.left ?? 0) - (m.right ?? 0)),
-      height: (m.top || m.bottom) && (pageSize.height - (m.top ?? 0) - (m.bottom ?? 0)),
+      width: (m.left ?? m.right) && (pageSize.width - (m.left ?? 0) - (m.right ?? 0)),
+      height: (m.top ?? m.bottom) && (pageSize.height - (m.top ?? 0) - (m.bottom ?? 0)),
     },
   );
 };
 
 // Kinda copied from https://github.com/simonbengtsson/jsPDF-AutoTable/
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const applyPlugin = (pdf: any) => {
   // eslint-disable-next-line no-param-reassign
   pdf.API.mdToPDF = async function mdToPDFPlugin(this: jsPDF, md: string, opts?: PluginOptions) {
@@ -85,25 +88,22 @@ const applyPlugin = (pdf: any) => {
 
 try {
   // Using require because we need sync import
-  // eslint-disable-next-line global-require
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports, n/global-require
   let jsPDF = require('jspdf');
   // Webpack imported jspdf instead of jsPDF for some reason
   // while it seemed to work everywhere else.
   if ('jsPDF' in jsPDF) jsPDF = jsPDF.jsPDF;
   applyPlugin(jsPDF);
-} catch (error) {
+} catch {
   // Importing jspdf in nodejs environments does not work as of jspdf
   // 1.5.3 so we need to silence potential errors to support using for example
   // the nodejs jspdf dist files with the exported applyPlugin
 }
 
 export default mdToPDF;
-export {
-  /** * @deprecated use `MdParser` instead  */
-  Parser,
-  Parser as MdParser,
-  /** * @deprecated use `MdParserOptions` instead  */
+export type {
+  ImgRemoteRequestor as MdImgRemoteRequestor,
   PluginOptions,
   PluginOptions as MdParserOptions,
-  ImgRemoteRequestor as MdImgRemoteRequestor,
 };

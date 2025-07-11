@@ -1,16 +1,16 @@
+import Element from './Element';
+import TextElement from './Text';
+
 import type { jsPDF } from 'jspdf';
 
+import type ListItemElement from './ListItem';
 import type {
-  Position,
-  Size,
   Area,
-  RenderResult,
+  Position,
   RenderOptions,
+  RenderResult,
+  Size,
 } from '../types';
-
-import Element from './Element';
-import ListItemElement from './ListItem';
-import TextElement from './Text';
 
 export default class ListElement extends Element<undefined> {
   declare protected children: ListItemElement[];
@@ -84,7 +84,7 @@ export default class ListElement extends Element<undefined> {
       const child = this.children[i];
       const maxWidth = edge.width - (s.x - edge.x) - this.paddingLeft;
 
-      const { h } = pdf.getTextDimensions(child.content || ' ', { maxWidth });
+      const { h } = pdf.getTextDimensions(child.content ?? ' ', { maxWidth });
       // If will be overflowing
       if (this.cursor.y + h > edge.height) {
         hasCreatedPage = true;

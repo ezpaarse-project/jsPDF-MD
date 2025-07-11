@@ -1,10 +1,10 @@
 import type { jsPDF } from 'jspdf';
 
 import type {
-  Position,
   Area,
-  RenderResult,
+  Position,
   RenderOptions,
+  RenderResult,
 } from '../types';
 
 export default abstract class Element<T = unknown> {
