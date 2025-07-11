@@ -1,23 +1,23 @@
+import TextElement from './Text';
+import '../../fonts/Monospace-normal.js';
+
 import type jsPDF from 'jspdf';
 
+import { last } from 'lodash';
+
 import type {
-  RenderOptions,
   Area,
   Position,
+  RenderOptions,
   RenderResult,
 } from '../types';
-
-import TextElement from './Text';
-
-// eslint-disable-next-line import/extensions
-import '../../fonts/Monospace-normal.js';
 
 export default class CodeSpanElement extends TextElement {
   render(
     pdf: jsPDF,
     opts: RenderOptions,
     edge: Area,
-    start?: Position | undefined,
+    start?: Position,
   ): RenderResult {
     const s = start ?? { x: edge.x, y: edge.y };
     const padding = pdf.getFontSize() * (2 / 16);
@@ -26,7 +26,7 @@ export default class CodeSpanElement extends TextElement {
     const fillColor = pdf.getFillColor();
     const textColor = pdf.getTextColor();
 
-    pdf.setFont(opts.codeFont || 'Monospace');
+    pdf.setFont(opts.codeFont ?? 'Monospace');
     const { w: lineWidth, h: lineHeight } = pdf.getTextDimensions(this.content);
     const { w } = pdf.getTextDimensions(this.content, { maxWidth: edge.width - s.x });
     const parts: Area[] = [
@@ -43,7 +43,7 @@ export default class CodeSpanElement extends TextElement {
       parts[0].width = w;
       let rest = lineWidth - parts[0].width;
       while (rest > 0) {
-        const lastPart = parts.at(-1);
+        const lastPart = last(parts);
         if (lastPart) {
           lastPart.width += (edge.width - lastPart.x);
         }

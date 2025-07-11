@@ -1,14 +1,14 @@
+import ParagraphElement from './Paragraph';
+
 import type jsPDF from 'jspdf';
 
 import type {
-  RenderOptions,
   Area,
   Position,
+  RenderOptions,
   RenderResult,
 } from '../types';
 import type Element from './Element';
-
-import ParagraphElement from './Paragraph';
 
 export type CellAlign = 'center' | 'left' | 'right';
 
@@ -25,7 +25,7 @@ export default class TableCellElement extends ParagraphElement {
     pdf: jsPDF,
     opts: RenderOptions,
     edge: Area,
-    start?: Position | undefined,
+    start?: Position,
   ): RenderResult {
     const padding = 5;
     const e = { ...edge };

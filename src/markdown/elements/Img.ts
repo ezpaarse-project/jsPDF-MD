@@ -1,30 +1,31 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import type { jsPDF } from 'jspdf';
-import { lookup } from 'mime-types';
 import { Image } from 'canvas';
-
-import type {
-  Position,
-  Area,
-  RenderResult,
-  RenderOptions,
-  Size,
-} from '../types';
+import { lookup } from 'mime-types';
 
 import Element from './Element';
 
-type ImgRequestorResult = {
+import type { jsPDF } from 'jspdf';
+
+import type {
+  Area,
+  Position,
+  RenderOptions,
+  RenderResult,
+  Size,
+} from '../types';
+
+interface ImgRequestorResult {
   /**
    * The data of the ressource
    */
-  data: ArrayBuffer,
+  data: ArrayBuffer;
   /**
    * Headers of the response
    */
-  headers: Record<string, string>
-};
+  headers: Record<string, string>;
+}
 
 export type ImgRemoteRequestor = (
   /**
@@ -37,10 +38,10 @@ export type ImgRemoteRequestor = (
   method: string,
 ) => Promise<ImgRequestorResult> | ImgRequestorResult;
 
-type ImgMeta = {
-  height: number,
-  width: number,
-};
+interface ImgMeta {
+  height: number;
+  width: number;
+}
 
 export default class ImgElement extends Element<string> {
   static contentPlaceholder = '<!-- <img to load> -->';
@@ -86,11 +87,12 @@ export default class ImgElement extends Element<string> {
 
   private async fetchLocal(assetDir?: string) {
     if (!assetDir) {
+      // eslint-disable-next-line @stylistic/max-len
       throw new Error('Local images are not supported. Please provide a `assetDir` either when fetching images, or in plugin options.');
     }
 
     const path = join(assetDir, this.src);
-    if (new RegExp(`^${assetDir}/[^.]*$`).test(path) === false) {
+    if (!new RegExp(`^${assetDir}/[^.]*$`).test(path)) {
       throw new Error(`Md's image must be in the "${assetDir}" folder. Resolved: "${path}"`);
     }
 
@@ -103,26 +105,26 @@ export default class ImgElement extends Element<string> {
     this.content = `data:${mime};base64,${raw}`;
   }
 
-  isLoaded() {
+  isLoaded(): boolean {
     return this.content !== ImgElement.contentPlaceholder;
   }
 
-  isLocal() {
+  isLocal(): boolean {
     return !this.isInline() && !this.isRemote();
   }
 
-  isInline() {
+  isInline(): boolean {
     return /^data:/i.test(this.src);
   }
 
-  isRemote() {
+  isRemote(): boolean {
     return /^https?:\/\//i.test(this.src);
   }
 
   async load(
     remoteRequestor: ImgRemoteRequestor,
     assetDir?: string,
-  ) {
+  ): Promise<{ data: string; height?: number; width?: number }> {
     if (!this.isLoaded()) {
       if (this.isRemote()) {
         await this.fetchRemote(remoteRequestor);

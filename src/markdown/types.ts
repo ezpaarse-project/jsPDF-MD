@@ -1,14 +1,14 @@
 // Common types
 
-export type Position = {
-  x: number,
-  y: number,
-};
+export interface Position {
+  x: number;
+  y: number;
+}
 
-export type Size = {
-  width: number,
-  height: number,
-};
+export interface Size {
+  width: number;
+  height: number;
+}
 
 export type Area = Position & Size;
 
@@ -20,26 +20,26 @@ export type RenderResult = Size & {
   /**
    * Size of the last line of the element
    */
-  lastLine: Size,
+  lastLine: Size;
   /**
    * Should the next element render under this one, or after the last line
    */
-  isBlock?: boolean,
+  isBlock?: boolean;
   /**
    * Is the current element created a new page, always false if `RenderOptions.pageBreak` is false
    */
-  hasCreatedPage?: boolean,
+  hasCreatedPage?: boolean;
 };
 
-export type RenderOptions = {
+export interface RenderOptions {
   /**
    * Should create a new page if an element is overflowing
    */
-  pageBreak?: boolean,
+  pageBreak?: boolean;
   /**
    * Font used when rendering a code element
    *
    * Default `Monospace` (included in lib)
    */
-  codeFont?: string,
-};
+  codeFont?: string;
+}

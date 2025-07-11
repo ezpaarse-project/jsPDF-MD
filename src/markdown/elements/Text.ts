@@ -1,24 +1,24 @@
 import { unescape } from 'lodash';
 
+import Element from './Element';
+
 import type { jsPDF } from 'jspdf';
 
 import type {
-  Position,
-  Size,
   Area,
-  RenderResult,
+  Position,
   RenderOptions,
+  RenderResult,
+  Size,
 } from '../types';
 
-import Element from './Element';
-
 export default class TextElement extends Element<string> {
-  static sanitizeContent(content: string) {
+  static sanitizeContent(content: string): string {
     return unescape(content)
       .replace(/\n/g, '');
   }
 
-  static getTextOffsetYFix(pdf: jsPDF) {
+  static getTextOffsetYFix(pdf: jsPDF): number {
     // Measure is taken with fontSize = 16 so we scale it
     return pdf.getFontSize() * (5 / 16);
   }

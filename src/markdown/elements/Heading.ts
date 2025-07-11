@@ -1,14 +1,14 @@
+import ParagraphElement from './Paragraph';
+
 import type { jsPDF } from 'jspdf';
 
+import type Element from './Element';
 import type {
-  Position,
   Area,
-  RenderResult,
+  Position,
   RenderOptions,
+  RenderResult,
 } from '../types';
-
-import Element from './Element';
-import ParagraphElement from './Paragraph';
 
 export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 

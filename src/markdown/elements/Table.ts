@@ -1,14 +1,14 @@
+import Element from './Element';
+
 import type jsPDF from 'jspdf';
 
 import type {
-  RenderOptions,
   Area,
   Position,
+  RenderOptions,
   RenderResult,
 } from '../types';
-
 import type TableRowElement from './TableRow';
-import Element from './Element';
 
 export default class TableElement extends Element<undefined> {
   declare protected children: TableRowElement[];
@@ -48,7 +48,7 @@ export default class TableElement extends Element<undefined> {
     pdf: jsPDF,
     opts: RenderOptions,
     edge: Area,
-    start?: Position | undefined,
+    start?: Position,
   ): RenderResult {
     const marginX = 5;
     const e = { ...edge };

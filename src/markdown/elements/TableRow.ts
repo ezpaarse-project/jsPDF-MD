@@ -1,14 +1,14 @@
+import Element from './Element';
+
 import type jsPDF from 'jspdf';
 
 import type {
-  RenderOptions,
   Area,
   Position,
+  RenderOptions,
   RenderResult,
 } from '../types';
-
 import type TableCellElement from './TableCell';
-import Element from './Element';
 
 export default class TableRowElement extends Element<undefined> {
   declare protected children: TableCellElement[];
@@ -21,7 +21,7 @@ export default class TableRowElement extends Element<undefined> {
     pdf: jsPDF,
     opts: RenderOptions,
     edge: Area,
-    start?: Position | undefined,
+    start?: Position,
   ): RenderResult {
     const s = start ?? { x: edge.x, y: edge.y };
     this.cursor = { ...s };

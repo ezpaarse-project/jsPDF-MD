@@ -1,15 +1,14 @@
+import ParagraphElement from './Paragraph';
+import TextElement from './Text';
+
 import type { jsPDF } from 'jspdf';
 
 import type {
-  Position,
   Area,
-  RenderResult,
+  Position,
   RenderOptions,
+  RenderResult,
 } from '../types';
-
-import ParagraphElement from './Paragraph';
-
-import TextElement from './Text';
 
 export default class DelElement extends ParagraphElement {
   render(

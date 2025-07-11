@@ -1,13 +1,13 @@
+import Element from './Element';
+
 import type { jsPDF } from 'jspdf';
 
 import type {
-  Position,
   Area,
-  RenderResult,
+  Position,
   RenderOptions,
+  RenderResult,
 } from '../types';
-
-import Element from './Element';
 
 export default class HrElement extends Element<undefined> {
   constructor() {
