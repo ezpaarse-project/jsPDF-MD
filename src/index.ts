@@ -102,12 +102,16 @@ try {
 }
 
 export default mdToPDF;
+
 export type {
   ImgRemoteRequestor as MdImgRemoteRequestor,
-  /** * @deprecated use `MdParser` instead  */
-  Parser,
-  Parser as MdParser,
   /** * @deprecated use `MdParserOptions` instead  */
   PluginOptions,
   PluginOptions as MdParserOptions,
+};
+
+export {
+  /** * @deprecated use `MdParser` instead  */
+  Parser,
+  Parser as MdParser,
 };
