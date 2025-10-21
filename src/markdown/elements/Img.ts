@@ -3,10 +3,11 @@ import { join } from 'node:path';
 
 import { Image } from 'canvas';
 import { lookup } from 'mime-types';
+import sharp from 'sharp';
 
 import Element from './Element';
 
-import type { jsPDF } from 'jspdf';
+import type { ImageFormat, jsPDF } from 'jspdf';
 
 import type {
   Area,
@@ -43,10 +44,23 @@ interface ImgMeta {
   width: number;
 }
 
+const SupportedMimes: Readonly<Record<string, ImageFormat>> = {
+  // Mimes supported by jsPDF
+  'image/png': 'PNG',
+  'image/tiff': 'TIFF',
+  'image/jpg': 'JPG',
+  'image/jpeg': 'JPEG',
+  'image/gif': 'GIF89a',
+  'image/webp': 'WEBP',
+  'image/bmp': 'BMP',
+} as const;
+
 export default class ImgElement extends Element<string> {
   static contentPlaceholder = '<!-- <img to load> -->';
 
   private meta: ImgMeta | undefined;
+
+  private mime: string | undefined;
 
   constructor(
     private src: string,
@@ -67,22 +81,23 @@ export default class ImgElement extends Element<string> {
       width: img.width,
       height: img.height,
     };
+
     return this.meta;
   }
 
   private async fetchRemote(remoteRequestor: ImgRemoteRequestor) {
     const { data: file, headers } = await Promise.resolve(remoteRequestor(this.src, 'get'));
 
-    let mime: string = headers['Content-Type'] || headers['content-type'];
-    if (!mime) {
-      mime = lookup(this.src) || '';
+    this.mime = headers['Content-Type'] || headers['content-type'];
+    if (!this.mime) {
+      this.mime = lookup(this.src) || '';
     }
-    if (!mime) {
+    if (!this.mime) {
       throw new Error(`Cannot resolve MIME type of [${this.src}]`);
     }
 
     const raw = Buffer.from(file).toString('base64');
-    this.content = `data:${mime};base64,${raw}`;
+    this.content = `data:${this.mime};base64,${raw}`;
   }
 
   private async fetchLocal(assetDir?: string) {
@@ -100,6 +115,8 @@ export default class ImgElement extends Element<string> {
     if (!mime) {
       throw new Error(`Cannot resolve MIME type of [${this.src}]`);
     }
+
+    this.mime = mime;
 
     const raw = await readFile(path, 'base64');
     this.content = `data:${mime};base64,${raw}`;
@@ -139,6 +156,31 @@ export default class ImgElement extends Element<string> {
       }
 
       await this.loadMetadata();
+    }
+
+    if (this.mime) {
+      const format = SupportedMimes[this.mime];
+      if (!format) {
+        // Try to convert into PNG
+        const content = Buffer.from(
+          // Remove base64 header
+          this.content.replace(`data:${this.mime};base64,`, ''),
+          'base64',
+        );
+
+        let svg = sharp(content);
+
+        if (this.meta) {
+          svg = svg.resize({
+            width: this.meta.width,
+            height: this.meta.height,
+          });
+        }
+
+        this.mime = 'image/png';
+        const png = (await svg.png().toBuffer()).toString('base64');
+        this.content = `data:${this.mime};base64,${png}`;
+      }
     }
 
     return {
